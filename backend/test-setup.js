@@ -8,7 +8,7 @@ process.env.DB_HOST = 'localhost';
 process.env.DB_NAME = 'portfolio_db'; 
 process.env.DB_PASSWORD = '4the9t'; 
 process.env.DB_PORT = '5432';
-process.env.PORT = '5001';
+process.env.PORT = '5000';
 
 // Global test database pool
 global.testPool = new Pool({

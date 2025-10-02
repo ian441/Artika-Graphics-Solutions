@@ -87,6 +87,28 @@ class AuthController {
       });
     }
   }
+
+  // Update user profile
+  static async updateProfile(req, res) {
+    try {
+      const userId = req.user.id;
+      const profileData = req.body;
+      const user = await User.updateProfile(userId, profileData);
+
+      res.json({
+        success: true,
+        message: 'Profile updated successfully',
+        data: user
+      });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to update profile',
+        error: error.message
+      });
+    }
+  }
 }
 
 module.exports = AuthController;

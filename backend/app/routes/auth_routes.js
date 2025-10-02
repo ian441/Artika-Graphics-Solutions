@@ -13,4 +13,7 @@ router.post('/login', AuthController.login);
 // Get user profile (protected route)
 router.get('/profile', authenticateToken, AuthController.getProfile);
 
+// Update user profile (protected route)
+router.patch('/profile', authenticateToken, AuthController.updateProfile);
+
 module.exports = router;

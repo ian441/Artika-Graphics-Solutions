@@ -1,38 +1,16 @@
 const PortfolioProject = require('../models/portfolio_project');
 const PortfolioCategory = require('../models/portfolio_category');
-const { pool } = require('../../db');
+const { authenticateToken } = require('../middleware/auth');
 
 class PortfolioController {
-  // Get all projects with optional filtering
+  // Get all projects
   static async getProjects(req, res) {
     try {
-      const { category, featured, page = 1, limit = 12 } = req.query;
-      
-      const filters = {};
-      if (category && category !== 'all') {
-        filters.category = category;
-      }
-      if (featured) {
-        filters.featured = featured === 'true';
-      }
-
-      // Calculate pagination
-      const offset = (page - 1) * limit;
-      filters.limit = parseInt(limit);
-      filters.offset = offset;
-
+      const filters = req.query;
       const projects = await PortfolioProject.findAll(filters);
-      const totalProjects = await PortfolioController.getProjectCount(filters);
-
       res.json({
         success: true,
-        data: projects,
-        pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          total: totalProjects,
-          pages: Math.ceil(totalProjects / limit)
-        }
+        data: projects
       });
     } catch (error) {
       console.error('Error fetching projects:', error);
@@ -75,7 +53,6 @@ class PortfolioController {
   static async getCategories(req, res) {
     try {
       const categories = await PortfolioCategory.findAll();
-      
       res.json({
         success: true,
         data: categories
@@ -93,9 +70,8 @@ class PortfolioController {
   // Get featured projects
   static async getFeaturedProjects(req, res) {
     try {
-      const { limit = 6 } = req.query;
-      const projects = await PortfolioProject.getFeatured(parseInt(limit));
-
+      const limit = parseInt(req.query.limit) || 6;
+      const projects = await PortfolioProject.getFeatured(limit);
       res.json({
         success: true,
         data: projects
@@ -114,10 +90,8 @@ class PortfolioController {
   static async getProjectsByCategory(req, res) {
     try {
       const { category } = req.params;
-      const { limit = 12 } = req.query;
-      
-      const projects = await PortfolioProject.getByCategory(category, parseInt(limit));
-
+      const limit = parseInt(req.query.limit) || 12;
+      const projects = await PortfolioProject.getByCategory(category, limit);
       res.json({
         success: true,
         data: projects
@@ -132,12 +106,33 @@ class PortfolioController {
     }
   }
 
+  // Get projects by client (user) - protected route
+  static async getProjectsByClient(req, res) {
+    try {
+      const userId = req.user.id; // From auth middleware
+      // Note: Assuming portfolio_projects has a client_id field; adjust if needed
+      const query = 'SELECT * FROM portfolio_projects WHERE client_id = $1';
+      const result = await pool.query(query, [userId]);
+      const projects = result.rows.map(row => new PortfolioProject(row));
+      res.json({
+        success: true,
+        data: projects
+      });
+    } catch (error) {
+      console.error('Error fetching user projects:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch user projects',
+        error: error.message
+      });
+    }
+  }
+
   // Create new project (admin only)
   static async createProject(req, res) {
     try {
       const projectData = req.body;
       const project = await PortfolioProject.create(projectData);
-
       res.status(201).json({
         success: true,
         message: 'Project created successfully',
@@ -158,8 +153,8 @@ class PortfolioController {
     try {
       const { id } = req.params;
       const updateData = req.body;
-
       const project = await PortfolioProject.findById(id);
+
       if (!project) {
         return res.status(404).json({
           success: false,
@@ -168,7 +163,6 @@ class PortfolioController {
       }
 
       const updatedProject = await project.update(updateData);
-
       res.json({
         success: true,
         message: 'Project updated successfully',
@@ -188,8 +182,8 @@ class PortfolioController {
   static async deleteProject(req, res) {
     try {
       const { id } = req.params;
-
       const project = await PortfolioProject.findById(id);
+
       if (!project) {
         return res.status(404).json({
           success: false,
@@ -198,7 +192,6 @@ class PortfolioController {
       }
 
       await project.delete();
-
       res.json({
         success: true,
         message: 'Project deleted successfully'
@@ -210,56 +203,6 @@ class PortfolioController {
         message: 'Failed to delete project',
         error: error.message
       });
-    }
-  }
-
-  // Get projects by client (user)
-  static async getProjectsByClient(req, res) {
-    try {
-      const clientEmail = req.user.email; // Get email from authenticated user
-      
-      const query = 'SELECT * FROM portfolio_projects WHERE client = $1 ORDER BY created_at DESC';
-      
-      const result = await pool.query(query, [clientEmail]);
-      const projects = result.rows.map(row => new PortfolioProject(row));
-
-      res.json({
-        success: true,
-        data: projects
-      });
-    } catch (error) {
-      console.error('Error fetching projects by client:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Failed to fetch projects for client',
-        error: error.message
-      });
-    }
-  }
-
-  // Helper method to get project count
-  static async getProjectCount(filters = {}) {
-    let query = 'SELECT COUNT(*) FROM portfolio_projects WHERE 1=1';
-    const values = [];
-    let paramCount = 1;
-
-    if (filters.category && filters.category !== 'all') {
-      query += ` AND category = $${paramCount}`;
-      values.push(filters.category);
-      paramCount++;
-    }
-
-    if (filters.featured) {
-      query += ` AND featured = $${paramCount}`;
-      values.push(filters.featured);
-      paramCount++;
-    }
-
-    try {
-      const result = await pool.query(query, values);
-      return parseInt(result.rows[0].count);
-    } catch (error) {
-      throw new Error(`Error counting projects: ${error.message}`);
     }
   }
 }

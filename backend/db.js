@@ -32,16 +32,18 @@ const createTables = async () => {
         category VARCHAR(100),
         image VARCHAR(500),
         description TEXT,
-        challenge TEXT,
-        solution TEXT,
-        results TEXT,
-        process TEXT[],
         duration VARCHAR(100),
         featured BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Drop old columns if they exist
+    await pool.query(`ALTER TABLE portfolio_projects DROP COLUMN IF EXISTS challenge`);
+    await pool.query(`ALTER TABLE portfolio_projects DROP COLUMN IF EXISTS solution`);
+    await pool.query(`ALTER TABLE portfolio_projects DROP COLUMN IF EXISTS results`);
+    await pool.query(`ALTER TABLE portfolio_projects DROP COLUMN IF EXISTS process`);
 
     // Create contact_submissions table
     await pool.query(`
@@ -96,11 +98,11 @@ const insertSampleData = async () => {
 
     // Insert sample projects
     await pool.query(`
-      INSERT INTO portfolio_projects (title, client, category, image, description, challenge, solution, results, process, duration, featured) VALUES
-      ('E-commerce Website', 'TechCorp Solutions', 'web', '/images/project1.jpg', 'A modern e-commerce platform with React and Node.js', 'Building a scalable e-commerce platform that could handle high traffic', 'Implemented microservices architecture with React frontend and Node.js backend', 'Increased sales by 150% and improved user engagement by 200%', ARRAY['Discovery & Planning', 'Design & Prototyping', 'Development & Testing', 'Launch & Optimization'], '6 months', true),
-      ('Mobile Banking App', 'SecureBank Ltd', 'mobile', '/images/project2.jpg', 'Secure mobile banking application for iOS and Android', 'Creating a secure and user-friendly mobile banking experience', 'Developed cross-platform app with biometric authentication and real-time notifications', 'Achieved 98% user satisfaction rate and 40% increase in mobile banking adoption', ARRAY['Security Audit', 'UI/UX Design', 'Development', 'Security Testing', 'App Store Launch'], '8 months', true),
-      ('Portfolio Website', 'CreativeStudio Pro', 'design', '/images/project3.jpg', 'Responsive portfolio website design', 'Showcasing creative work in an engaging and professional manner', 'Created modern, responsive design with smooth animations and optimal performance', 'Improved client acquisition by 60% and enhanced brand visibility', ARRAY['Brand Analysis', 'Design Concept', 'Development', 'Content Integration'], '3 months', false),
-      ('Online Store', 'FashionHub Inc', 'ecommerce', '/images/project4.jpg', 'Complete e-commerce solution with payment integration', 'Building a comprehensive online shopping platform', 'Integrated multiple payment gateways and inventory management system', 'Processed over $2M in transactions within first year', ARRAY['Market Research', 'Platform Design', 'Payment Integration', 'Testing & Launch'], '5 months', true)
+      INSERT INTO portfolio_projects (title, client, category, image, description, duration, featured) VALUES
+      ('E-commerce Website', 'TechCorp Solutions', 'web', '/images/project1.jpg', 'A modern e-commerce platform with React and Node.js', '6 months', true),
+      ('Mobile Banking App', 'SecureBank Ltd', 'mobile', '/images/project2.jpg', 'Secure mobile banking application for iOS and Android', '8 months', true),
+      ('Portfolio Website', 'CreativeStudio Pro', 'design', '/images/project3.jpg', 'Responsive portfolio website design', '3 months', false),
+      ('Online Store', 'FashionHub Inc', 'ecommerce', '/images/project4.jpg', 'Complete e-commerce solution with payment integration', '5 months', true)
       ON CONFLICT DO NOTHING
     `);
 

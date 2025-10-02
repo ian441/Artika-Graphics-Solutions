@@ -24,7 +24,7 @@ const apiFetch = async (url, options = {}) => {
 
 // Contact API
 export const createContact = async (contactData) => {
-  return apiFetch('/api/contact', {
+  return apiFetch('/contact', {
     method: 'POST',
     body: JSON.stringify(contactData),
   });
@@ -40,31 +40,31 @@ export const fetchPortfolioProjects = async (params = {}) => {
   if (params.featured) queryParams.append('featured', params.featured);
 
   const queryString = queryParams.toString();
-  const url = queryString ? `/api/portfolio?${queryString}` : '/api/portfolio';
+  const url = queryString ? `/portfolio?${queryString}` : '/portfolio';
   
   return apiFetch(url);
 };
 
 export const fetchPortfolioProjectById = async (id) => {
-  return apiFetch(`/api/portfolio/${id}`);
+  return apiFetch(`/portfolio/${id}`);
 };
 
 export const fetchPortfolioCategories = async () => {
-  return apiFetch('/api/portfolio/categories');
+  return apiFetch('/portfolio/categories');
 };
 
 export const fetchFeaturedProjects = async (limit = 6) => {
-  return apiFetch(`/api/portfolio?featured=true&limit=${limit}`);
+  return apiFetch(`/portfolio?featured=true&limit=${limit}`);
 };
 
 export const fetchProjectsByCategory = async (category, limit = 12) => {
-  return apiFetch(`/api/portfolio?category=${category}&limit=${limit}`);
+  return apiFetch(`/portfolio?category=${category}&limit=${limit}`);
 };
 
 // Get projects by authenticated user
 export const fetchProjectsByClient = async () => {
   const token = localStorage.getItem('token');
-  return apiFetch('/api/portfolio/my-projects', {
+  return apiFetch('/portfolio/my-projects', {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -73,14 +73,14 @@ export const fetchProjectsByClient = async () => {
 
 // Authentication API
 export const loginUser = async (credentials) => {
-  return apiFetch('/api/auth/login', {
+  return apiFetch('/auth/login', {
     method: 'POST',
     body: JSON.stringify(credentials),
   });
 };
 
 export const registerUser = async (userData) => {
-  return apiFetch('/api/auth/register', {
+  return apiFetch('/auth/register', {
     method: 'POST',
     body: JSON.stringify(userData),
   });
@@ -88,10 +88,192 @@ export const registerUser = async (userData) => {
 
 export const getProfile = async () => {
   const token = localStorage.getItem('token');
-  return apiFetch('/api/auth/profile', {
+  return apiFetch('/auth/profile', {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
+  });
+};
+
+// Projects API (user projects)
+export const createProject = async (projectData) => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/projects', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(projectData),
+  });
+};
+
+export const getUserProjects = async () => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/projects', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const getProjectById = async (id) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/projects/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const updateProject = async (id, projectData) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/projects/${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(projectData),
+  });
+};
+
+export const deleteProject = async (id) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/projects/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+// Messages API
+export const createMessage = async (messageData) => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/messages', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(messageData),
+  });
+};
+
+export const getUserMessages = async () => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/messages', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const getUnreadMessageCount = async () => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/messages/unread-count', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const markMessageAsRead = async (id) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/messages/${id}/read`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const deleteMessage = async (id) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/messages/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+// Favorites API
+export const addFavorite = async (projectId) => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/favorites', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ projectId }),
+  });
+};
+
+export const getUserFavorites = async () => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/favorites', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const checkFavorite = async (projectId) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/favorites/check/${projectId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const removeFavorite = async (projectId) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/favorites/${projectId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+// Orders API
+export const createOrder = async (orderData) => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/orders', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(orderData),
+  });
+};
+
+export const getUserOrders = async () => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/orders', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const getOrderById = async (id) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/orders/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const updateOrderStatus = async (id, status) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/orders/${id}/status`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
   });
 };
 

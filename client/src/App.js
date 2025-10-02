@@ -9,6 +9,10 @@ import Contact from './components/Contact';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import Dashboard from './components/Dashboard';
+import Projects from './components/Projects';
+import Messages from './components/Messages';
+import Favorites from './components/Favorites';
+import Orders from './components/Orders';
 
 function App() {
   return (
@@ -24,6 +28,10 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/orders" element={<Orders />} />
           <Route path="/login" element={<Navigate to="/signin" replace />} />
         </Routes>
       </div>

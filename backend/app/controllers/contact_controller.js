@@ -4,33 +4,18 @@ class ContactController {
   // Create a new contact submission
   static async createContact(req, res) {
     try {
-      const { name, email, company, message } = req.body;
-
-      // Basic validation
-      if (!name || !email || !message) {
-        return res.status(400).json({
-          success: false,
-          message: 'Name, email, and message are required'
-        });
-      }
-
-      const submission = await ContactSubmission.create({
-        name,
-        email,
-        company,
-        message
-      });
-
+      const contactData = req.body;
+      const submission = await ContactSubmission.create(contactData);
       res.status(201).json({
         success: true,
-        message: 'Contact submission received successfully',
+        message: 'Contact submission created successfully',
         data: submission
       });
     } catch (error) {
       console.error('Error creating contact submission:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to submit contact form',
+        message: 'Failed to create contact submission',
         error: error.message
       });
     }
@@ -39,42 +24,17 @@ class ContactController {
   // Get all contact submissions (admin only)
   static async getSubmissions(req, res) {
     try {
-      const { email, startDate, endDate, page = 1, limit = 20 } = req.query;
-      
-      const filters = {};
-      if (email) {
-        filters.email = email;
-      }
-      if (startDate) {
-        filters.startDate = new Date(startDate);
-      }
-      if (endDate) {
-        filters.endDate = new Date(endDate);
-      }
-
-      // Calculate pagination
-      const offset = (page - 1) * limit;
-      filters.limit = parseInt(limit);
-      filters.offset = offset;
-
-      const submissions = await ContactSubmission.findAll(filters);
-      const totalSubmissions = await ContactSubmission.getCount(filters);
-
+      const { limit = 50, offset = 0 } = req.query;
+      const submissions = await ContactSubmission.findAll({ limit: parseInt(limit), offset: parseInt(offset) });
       res.json({
         success: true,
-        data: submissions,
-        pagination: {
-          page: parseInt(page),
-          limit: parseInt(limit),
-          total: totalSubmissions,
-          pages: Math.ceil(totalSubmissions / limit)
-        }
+        data: submissions
       });
     } catch (error) {
-      console.error('Error fetching contact submissions:', error);
+      console.error('Error fetching submissions:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to fetch contact submissions',
+        message: 'Failed to fetch submissions',
         error: error.message
       });
     }
@@ -89,7 +49,7 @@ class ContactController {
       if (!submission) {
         return res.status(404).json({
           success: false,
-          message: 'Contact submission not found'
+          message: 'Submission not found'
         });
       }
 
@@ -98,10 +58,10 @@ class ContactController {
         data: submission
       });
     } catch (error) {
-      console.error('Error fetching contact submission:', error);
+      console.error('Error fetching submission:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to fetch contact submission',
+        message: 'Failed to fetch submission',
         error: error.message
       });
     }
@@ -112,7 +72,6 @@ class ContactController {
     try {
       const { email } = req.params;
       const submissions = await ContactSubmission.findByEmail(email);
-
       res.json({
         success: true,
         data: submissions
@@ -132,27 +91,26 @@ class ContactController {
     try {
       const { id } = req.params;
       const updateData = req.body;
-
       const submission = await ContactSubmission.findById(id);
+
       if (!submission) {
         return res.status(404).json({
           success: false,
-          message: 'Contact submission not found'
+          message: 'Submission not found'
         });
       }
 
       const updatedSubmission = await submission.update(updateData);
-
       res.json({
         success: true,
-        message: 'Contact submission updated successfully',
+        message: 'Submission updated successfully',
         data: updatedSubmission
       });
     } catch (error) {
-      console.error('Error updating contact submission:', error);
+      console.error('Error updating submission:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to update contact submission',
+        message: 'Failed to update submission',
         error: error.message
       });
     }
@@ -162,26 +120,25 @@ class ContactController {
   static async deleteSubmission(req, res) {
     try {
       const { id } = req.params;
-
       const submission = await ContactSubmission.findById(id);
+
       if (!submission) {
         return res.status(404).json({
           success: false,
-          message: 'Contact submission not found'
+          message: 'Submission not found'
         });
       }
 
       await submission.delete();
-
       res.json({
         success: true,
-        message: 'Contact submission deleted successfully'
+        message: 'Submission deleted successfully'
       });
     } catch (error) {
-      console.error('Error deleting contact submission:', error);
+      console.error('Error deleting submission:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to delete contact submission',
+        message: 'Failed to delete submission',
         error: error.message
       });
     }
@@ -190,9 +147,8 @@ class ContactController {
   // Get recent submissions (admin only)
   static async getRecentSubmissions(req, res) {
     try {
-      const { limit = 10 } = req.query;
-      const submissions = await ContactSubmission.getRecent(parseInt(limit));
-
+      const { days = 30 } = req.query;
+      const submissions = await ContactSubmission.getRecent(parseInt(days));
       res.json({
         success: true,
         data: submissions
@@ -210,28 +166,16 @@ class ContactController {
   // Get submission statistics (admin only)
   static async getStatistics(req, res) {
     try {
-      const totalSubmissions = await ContactSubmission.getCount();
-      const recentSubmissions = await ContactSubmission.getRecent(5);
-
-      // Get submissions by month for the last 6 months
-      const sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
-      const monthlyStats = await ContactSubmission.getMonthlyStats(sixMonthsAgo);
-
+      const stats = await ContactSubmission.getStatistics();
       res.json({
         success: true,
-        data: {
-          total: totalSubmissions,
-          recent: recentSubmissions,
-          monthlyStats
-        }
+        data: stats
       });
     } catch (error) {
-      console.error('Error fetching submission statistics:', error);
+      console.error('Error fetching statistics:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to fetch submission statistics',
+        message: 'Failed to fetch statistics',
         error: error.message
       });
     }
