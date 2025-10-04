@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getProfile, fetchProjectsByClient } from '../services/api';
+import { getProfile, getUserProjects } from '../services/api';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -14,7 +14,7 @@ const Dashboard = () => {
         if (profileData.success) {
           setUser(profileData.data);
           // Fetch projects for the authenticated user
-          const projectsData = await fetchProjectsByClient();
+          const projectsData = await getUserProjects();
           if (projectsData.success) {
             setProjects(projectsData.data);
           } else {
