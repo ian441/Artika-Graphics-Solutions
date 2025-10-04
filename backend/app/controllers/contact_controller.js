@@ -4,12 +4,29 @@ class ContactController {
   // Create a new contact submission
   static async createContact(req, res) {
     try {
-      const contactData = req.body;
+      const { name, email, company, message } = req.body;
+
+      // Validate required fields
+      if (!name || !email || !message) {
+        return res.status(400).json({
+          message: 'Name, email, and message are required'
+        });
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({
+          message: 'Invalid email format'
+        });
+      }
+
+      const contactData = { name, email, company, message };
       const submission = await ContactSubmission.create(contactData);
+
       res.status(201).json({
-        success: true,
-        message: 'Contact submission created successfully',
-        data: submission
+        message: 'Contact submission received',
+        submission: submission
       });
     } catch (error) {
       console.error('Error creating contact submission:', error);

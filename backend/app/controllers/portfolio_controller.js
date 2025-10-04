@@ -8,10 +8,7 @@ class PortfolioController {
     try {
       const filters = req.query;
       const projects = await PortfolioProject.findAll(filters);
-      res.json({
-        success: true,
-        data: projects
-      });
+      res.json(projects);
     } catch (error) {
       console.error('Error fetching projects:', error);
       res.status(500).json({
@@ -30,15 +27,11 @@ class PortfolioController {
 
       if (!project) {
         return res.status(404).json({
-          success: false,
           message: 'Project not found'
         });
       }
 
-      res.json({
-        success: true,
-        data: project
-      });
+      res.json(project);
     } catch (error) {
       console.error('Error fetching project:', error);
       res.status(500).json({
@@ -53,10 +46,7 @@ class PortfolioController {
   static async getCategories(req, res) {
     try {
       const categories = await PortfolioCategory.findAll();
-      res.json({
-        success: true,
-        data: categories
-      });
+      res.json(categories);
     } catch (error) {
       console.error('Error fetching categories:', error);
       res.status(500).json({
@@ -72,10 +62,7 @@ class PortfolioController {
     try {
       const limit = parseInt(req.query.limit) || 6;
       const projects = await PortfolioProject.getFeatured(limit);
-      res.json({
-        success: true,
-        data: projects
-      });
+      res.json(projects);
     } catch (error) {
       console.error('Error fetching featured projects:', error);
       res.status(500).json({
@@ -92,10 +79,7 @@ class PortfolioController {
       const { category } = req.params;
       const limit = parseInt(req.query.limit) || 12;
       const projects = await PortfolioProject.getByCategory(category, limit);
-      res.json({
-        success: true,
-        data: projects
-      });
+      res.json(projects);
     } catch (error) {
       console.error('Error fetching projects by category:', error);
       res.status(500).json({
