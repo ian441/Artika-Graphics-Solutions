@@ -10,7 +10,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:verbose": "jest --verbose",
-    "migrate": "for %f in (backend\\migrations\\*.sql) do psql -d your_database_name -U your_username -f \"%f\""
+    "migrate": "set PGPASSWORD=4the9t && for %f in (backend\\migrations\\*.sql) do psql -d portfolio_db -U ayro5 -f \"%f\""
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
