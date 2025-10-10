@@ -42,7 +42,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
+    <div className="max-w-6xl mx-auto p-20">
       <h2 className="text-3xl font-bold mb-6 text-center md:text-left">Dashboard</h2>
       {user && (
         <div className="bg-white shadow-md rounded-lg p-6 mb-8">
