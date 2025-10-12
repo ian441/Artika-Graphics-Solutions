@@ -64,7 +64,7 @@ const Contact = () => {
           backgroundPosition: 'center'
         }}
       >
-        <div className="absolute inset-0 bg-white/80"></div>
+        <div className="absolute inset-0 bg-black/80"></div>
         <div className="relative max-w-7xl mx-auto px-6 text-center">
           <div className="space-y-6">
             <h1 className="text-5xl lg:text-6xl font-bold text-gray-900">

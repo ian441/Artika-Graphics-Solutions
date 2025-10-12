@@ -115,10 +115,10 @@ const About = () => {
           top: 0.5rem;
           width: 12px;
           height: 12px;
-          background: #3b82f6;
+          background: #0284C7;
           border-radius: 50%;
         }
-        
+
         .milestone-item::after {
           content: '';
           position: absolute;
@@ -126,7 +126,7 @@ const About = () => {
           top: 1.25rem;
           width: 2px;
           height: calc(100% + 1rem);
-          background: #e5e7eb;
+          background: #CBD5E0;
         }
         
         .milestone-item:last-child::after {
