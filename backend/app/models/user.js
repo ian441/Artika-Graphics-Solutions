@@ -2,7 +2,7 @@ const { pool } = require('../../db');
 const bcrypt = require('bcrypt');
 
 class User {
-  constructor({ id, email, password, created_at, name, avatar, updated_at }) {
+  constructor({ id, email, password, created_at, name, avatar, updated_at, role, is_active, banned_at, ban_reason }) {
     this.id = id;
     this.email = email;
     this.password = password; // Store hashed password
@@ -10,6 +10,10 @@ class User {
     this.name = name;
     this.avatar = avatar;
     this.updated_at = updated_at;
+    this.role = role || 'client';
+    this.is_active = is_active !== undefined ? is_active : true;
+    this.banned_at = banned_at;
+    this.ban_reason = ban_reason;
   }
 
   // Create a new user
@@ -146,6 +150,115 @@ class User {
       return result.rows;
     } catch (error) {
       throw new Error(`Error fetching orders: ${error.message}`);
+    }
+  }
+
+  // Admin methods for user management
+  static async getAllUsers(filters = {}) {
+    let query = `
+      SELECT id, email, name, avatar, role, is_active, banned_at, ban_reason, created_at, updated_at
+      FROM users
+    `;
+    const conditions = [];
+    const params = [];
+
+    if (filters.role) {
+      conditions.push(`role = $${params.length + 1}`);
+      params.push(filters.role);
+    }
+
+    if (filters.is_active !== undefined) {
+      conditions.push(`is_active = $${params.length + 1}`);
+      params.push(filters.is_active);
+    }
+
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ');
+    }
+
+    query += ' ORDER BY created_at DESC';
+
+    try {
+      const result = await pool.query(query, params);
+      return result.rows.map(row => new User(row));
+    } catch (error) {
+      throw new Error(`Error fetching users: ${error.message}`);
+    }
+  }
+
+  static async updateUserRole(userId, role) {
+    const query = `
+      UPDATE users
+      SET role = $1, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $2
+      RETURNING *
+    `;
+
+    try {
+      const result = await pool.query(query, [role, userId]);
+      if (result.rows.length === 0) {
+        throw new Error('User not found');
+      }
+      return new User(result.rows[0]);
+    } catch (error) {
+      throw new Error(`Error updating user role: ${error.message}`);
+    }
+  }
+
+  static async banUser(userId, reason) {
+    const query = `
+      UPDATE users
+      SET is_active = FALSE, banned_at = CURRENT_TIMESTAMP, ban_reason = $1, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $2
+      RETURNING *
+    `;
+
+    try {
+      const result = await pool.query(query, [reason, userId]);
+      if (result.rows.length === 0) {
+        throw new Error('User not found');
+      }
+      return new User(result.rows[0]);
+    } catch (error) {
+      throw new Error(`Error banning user: ${error.message}`);
+    }
+  }
+
+  static async unbanUser(userId) {
+    const query = `
+      UPDATE users
+      SET is_active = TRUE, banned_at = NULL, ban_reason = NULL, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $2
+      RETURNING *
+    `;
+
+    try {
+      const result = await pool.query(query, [userId]);
+      if (result.rows.length === 0) {
+        throw new Error('User not found');
+      }
+      return new User(result.rows[0]);
+    } catch (error) {
+      throw new Error(`Error unbanning user: ${error.message}`);
+    }
+  }
+
+  static async getUserStats() {
+    const query = `
+      SELECT
+        COUNT(*) as total_users,
+        COUNT(CASE WHEN role = 'admin' THEN 1 END) as admin_count,
+        COUNT(CASE WHEN role = 'team' THEN 1 END) as team_count,
+        COUNT(CASE WHEN role = 'client' THEN 1 END) as client_count,
+        COUNT(CASE WHEN is_active = FALSE THEN 1 END) as banned_count
+      FROM users
+    `;
+
+    try {
+      const result = await pool.query(query);
+      return result.rows[0];
+    } catch (error) {
+      throw new Error(`Error fetching user stats: ${error.message}`);
     }
   }
 }
