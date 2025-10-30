@@ -1,13 +1,17 @@
 const { pool } = require('../../db');
 
 class ContactSubmission {
-  constructor({ id, name, email, company, message, created_at }) {
+  constructor({ id, name, email, company, message, created_at, is_read, admin_reply, replied_at, replied_by }) {
     this.id = id;
     this.name = name;
     this.email = email;
     this.company = company;
     this.message = message;
     this.created_at = created_at;
+    this.is_read = is_read;
+    this.admin_reply = admin_reply;
+    this.replied_at = replied_at;
+    this.replied_by = replied_by;
   }
 
   // Create a new contact submission

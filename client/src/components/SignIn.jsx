@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { loginUser } from '../services/api';
+import { loginUser, getProfile } from '../services/api';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -20,7 +20,18 @@ const SignIn = () => {
       const response = await loginUser(formData);
       if (response.success && response.token) {
         localStorage.setItem('token', response.token);
-        navigate('/dashboard');
+        // Check user role to redirect appropriately
+        try {
+          const profileResponse = await getProfile();
+          if (profileResponse.success && profileResponse.data.role === 'admin') {
+            navigate('/admin');
+          } else {
+            navigate('/dashboard');
+          }
+        } catch (profileErr) {
+          // If profile fetch fails, default to regular dashboard
+          navigate('/dashboard');
+        }
       } else {
         setError(response.message || 'Login failed');
       }

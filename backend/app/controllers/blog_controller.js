@@ -48,7 +48,16 @@ class BlogController {
   static async getPost(req, res) {
     try {
       const { id } = req.params;
-      const post = await BlogPost.findById(id);
+
+      // Check if id is numeric, if not, treat as slug
+      const isNumeric = /^\d+$/.test(id);
+
+      let post;
+      if (isNumeric) {
+        post = await BlogPost.findById(parseInt(id));
+      } else {
+        post = await BlogPost.findBySlug(id);
+      }
 
       if (!post) {
         return res.status(404).json({

@@ -2,13 +2,28 @@ import { API_BASE_URL } from '../config';
 
 const apiFetch = async (url, options = {}) => {
   try {
+    const token = localStorage.getItem('token');
+    const headers = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_BASE_URL}${url}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
+      headers,
       ...options,
     });
+
+    if (response.status === 401) {
+      throw new Error('UNAUTHORIZED');
+    }
+
+    if (response.status === 403) {
+      throw new Error('FORBIDDEN');
+    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -63,12 +78,7 @@ export const fetchProjectsByCategory = async (category, limit = 12) => {
 
 // Get projects by authenticated user
 export const fetchProjectsByClient = async () => {
-  const token = localStorage.getItem('token');
-  return apiFetch('/portfolio/my-projects', {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  });
+  return apiFetch('/portfolio/my-projects');
 };
 
 // Authentication API
@@ -348,6 +358,27 @@ export const updateAdminContact = async (id, contactData) => {
   });
 };
 
+export const replyToAdminContact = async (id, reply) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/admin/contacts/${id}/reply`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ reply }),
+  });
+};
+
+export const markAdminContactAsRead = async (id) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/admin/contacts/${id}/read`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
 // Admin User Management API
 export const getAdminUsers = async (filters = {}) => {
   const token = localStorage.getItem('token');
@@ -581,6 +612,18 @@ export const deleteAdminContact = async (id) => {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
+  });
+};
+
+// Admin Messages API
+export const sendAdminMessage = async (messageData) => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/admin/messages/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(messageData),
   });
 };
 

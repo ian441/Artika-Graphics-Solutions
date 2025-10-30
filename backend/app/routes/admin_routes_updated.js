@@ -1,4 +1,5 @@
 const express = require('express');
+const { authenticateToken, requireAdmin } = require('../middleware/auth');
 const PortfolioController = require('../controllers/portfolio_controller');
 const ContactController = require('../controllers/contact_controller');
 const AdminUserController = require('../controllers/admin_user_controller');
@@ -12,6 +13,10 @@ const PortfolioProject = require('../models/portfolio_project');
 
 const router = express.Router();
 
+// Apply authentication middleware to all admin routes
+router.use(authenticateToken);
+router.use(requireAdmin);
+
 // Portfolio management routes
 router.get('/portfolio', PortfolioController.getProjects);
 router.post('/portfolio', PortfolioController.createProject);
@@ -22,6 +27,8 @@ router.delete('/portfolio/:id', PortfolioController.deleteProject);
 router.get('/contacts', ContactController.getSubmissions);
 router.get('/contacts/:id', ContactController.getSubmissionById);
 router.put('/contacts/:id', ContactController.updateSubmission);
+router.put('/contacts/:id/reply', ContactController.replyToSubmission);
+router.put('/contacts/:id/read', ContactController.markAsRead);
 router.delete('/contacts/:id', ContactController.deleteSubmission);
 router.get('/contacts/statistics', ContactController.getStatistics);
 
@@ -182,16 +189,45 @@ router.get('/orders/stats', async (req, res) => {
 // Message/Support ticket routes
 router.get('/messages', async (req, res) => {
   try {
-    const messages = await Message.findByUserId(null); // Get all messages for admin
+    const messages = await Message.getAllMessagesForAdmin();
     res.json({
       success: true,
-      data: messages
+      messages: messages
     });
   } catch (error) {
     console.error('Error fetching messages:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch messages',
+      error: error.message
+    });
+  }
+});
+
+// Send message from admin to user
+router.post('/messages/send', async (req, res) => {
+  try {
+    const { user_id, title, content } = req.body;
+    const admin_id = req.user?.id; // Assuming auth middleware sets req.user
+
+    if (!user_id || !title || !content) {
+      return res.status(400).json({
+        success: false,
+        message: 'user_id, title, and content are required'
+      });
+    }
+
+    const message = await Message.createAdminMessage(admin_id, user_id, title, content);
+    res.json({
+      success: true,
+      data: message,
+      message: 'Message sent successfully'
+    });
+  } catch (error) {
+    console.error('Error sending message:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send message',
       error: error.message
     });
   }
@@ -233,11 +269,11 @@ router.get('/settings/object', SystemSettingsController.getSettingsObject);
 // Blog management routes
 router.get('/blog', BlogController.getPosts);
 router.get('/blog/published', BlogController.getPublishedPosts);
-router.get('/blog/:id', BlogController.getPost);
+router.get('/blog/stats', BlogController.getStats);
 router.get('/blog/slug/:slug', BlogController.getPostBySlug);
+router.get('/blog/:id', BlogController.getPost);
 router.post('/blog', BlogController.createPost);
 router.put('/blog/:id', BlogController.updatePost);
 router.delete('/blog/:id', BlogController.deletePost);
-router.get('/blog/stats', BlogController.getStats);
 
 module.exports = router;

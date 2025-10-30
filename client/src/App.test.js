@@ -1,8 +1,10 @@
+import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders app without crashing', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  // Check for a common element, like the navigation or a heading
+  const navElement = screen.getByRole('navigation');
+  expect(navElement).toBeInTheDocument();
 });

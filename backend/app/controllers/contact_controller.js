@@ -133,6 +133,80 @@ class ContactController {
     }
   }
 
+  // Reply to contact submission (admin only)
+  static async replyToSubmission(req, res) {
+    try {
+      const { id } = req.params;
+      const { reply } = req.body;
+      const adminId = req.user?.id;
+
+      if (!reply || !reply.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Reply content is required'
+        });
+      }
+
+      const submission = await ContactSubmission.findById(id);
+      if (!submission) {
+        return res.status(404).json({
+          success: false,
+          message: 'Submission not found'
+        });
+      }
+
+      const updateData = {
+        admin_reply: reply.trim(),
+        replied_at: new Date(),
+        replied_by: adminId,
+        is_read: true
+      };
+
+      const updatedSubmission = await submission.update(updateData);
+      res.json({
+        success: true,
+        message: 'Reply sent successfully',
+        data: updatedSubmission
+      });
+    } catch (error) {
+      console.error('Error replying to submission:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to send reply',
+        error: error.message
+      });
+    }
+  }
+
+  // Mark submission as read (admin only)
+  static async markAsRead(req, res) {
+    try {
+      const { id } = req.params;
+      const submission = await ContactSubmission.findById(id);
+
+      if (!submission) {
+        return res.status(404).json({
+          success: false,
+          message: 'Submission not found'
+        });
+      }
+
+      const updatedSubmission = await submission.update({ is_read: true });
+      res.json({
+        success: true,
+        message: 'Submission marked as read',
+        data: updatedSubmission
+      });
+    } catch (error) {
+      console.error('Error marking submission as read:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to mark submission as read',
+        error: error.message
+      });
+    }
+  }
+
   // Delete contact submission (admin only)
   static async deleteSubmission(req, res) {
     try {

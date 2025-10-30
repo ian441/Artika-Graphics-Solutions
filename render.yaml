@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: artika-graphics-backend
+    runtime: node
+    buildCommand: "cd backend && npm install"
+    startCommand: "cd backend && npm start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_HOST
+        value: your-render-postgresql-host
+      - key: DB_NAME
+        value: your-database-name
+      - key: DB_USER
+        value: your-database-user
+      - key: DB_PASSWORD
+        value: your-database-password
+      - key: DB_PORT
+        value: 5432
+      - key: JWT_SECRET
+        value: your-jwt-secret-key
+      - key: PORT
+        value: 10000
+
+  - type: web
+    name: artika-graphics-frontend
+    runtime: static
+    buildCommand: "cd client && npm install && npm run build"
+    staticPublishPath: client/build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://artika-graphics-backend.onrender.com/api
