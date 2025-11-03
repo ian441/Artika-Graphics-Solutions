@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import { createContact } from '../services/api';
 import { DEFAULT_CONFIG } from '../config';
 
@@ -13,6 +14,42 @@ const Contact = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('idle');
+
+  const controls = useAnimation();
+
+  useEffect(() => {
+    controls.start('visible');
+  }, [controls]);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: 'easeOut'
+      }
+    }
+  };
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,10 +91,17 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black-500"  >
+    <motion.div
+      className="min-h-screen bg-primary-50"
+      initial="hidden"
+      animate={controls}
+      variants={containerVariants}
+    >
       {/* Hero Section */}
-      <section 
-        className="relative pt-24 pb-20 bg-gradient-to-br from-blue-50 via-white to-purple-50 overflow-hidden"
+      <motion.section
+        id="hero"
+        className="relative pt-24 pb-20 bg-gradient-to-br from-primary-100 via-primary-200 to-primary-300 overflow-hidden"
+        variants={itemVariants}
         style={{
           backgroundImage: `url(https://citiesofthefuture.eu/wp-content/uploads/2020/11/modern-architecture-4749683.jpg)`,
           backgroundSize: 'cover',
@@ -66,31 +110,52 @@ const Contact = () => {
       >
         <div className="absolute inset-0 bg-black/80"></div>
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <div className="space-y-6">
-            <h1 className="text-5xl lg:text-6xl font-bold text-gray-900">
+          <motion.div className="space-y-6" variants={itemVariants}>
+            <motion.h1
+              className="text-5xl lg:text-6xl font-bold text-white"
+              variants={itemVariants}
+            >
               Get in
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> Touch</span>
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary-500 to-accent-500"> Touch</span>
+            </motion.h1>
+            <motion.p
+              className="text-xl text-gray-300 max-w-3xl mx-auto"
+              variants={itemVariants}
+            >
               Ready to bring your creative vision to life? We would love to hear about your project and discuss how we can help you achieve your goals.
-            </p>
-            <div className="flex items-center justify-center space-x-8 pt-8">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900">24h</div>
-                <div className="text-sm text-gray-600">Response Time</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900">100+</div>
-                <div className="text-sm text-gray-600">Projects Delivered</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900">5★</div>
-                <div className="text-sm text-gray-600">Client Rating</div>
-              </div>
-            </div>
-          </div>
+            </motion.p>
+            <motion.div
+              className="flex items-center justify-center space-x-8 pt-8"
+              variants={itemVariants}
+            >
+              <motion.div
+                className="text-center"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05 }}
+              >
+                <div className="text-3xl font-bold text-secondary-500">24h</div>
+                <div className="text-sm text-gray-300">Response Time</div>
+              </motion.div>
+              <motion.div
+                className="text-center"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05 }}
+              >
+                <div className="text-3xl font-bold text-secondary-500">100+</div>
+                <div className="text-sm text-gray-300">Projects Delivered</div>
+              </motion.div>
+              <motion.div
+                className="text-center"
+                variants={itemVariants}
+                whileHover={{ scale: 1.05 }}
+              >
+                <div className="text-3xl font-bold text-accent-500">5★</div>
+                <div className="text-sm text-gray-300">Client Rating</div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Contact Information Section */}
       <section className="py-16 bg-white">
@@ -391,7 +456,7 @@ const Contact = () => {
         </div>
       </section>
 
-    </div>
+    </motion.div>
   );
 };
 

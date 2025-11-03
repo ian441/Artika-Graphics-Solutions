@@ -137,6 +137,24 @@ router.get('/projects/stats', async (req, res) => {
   }
 });
 
+router.delete('/projects/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Project.delete(id);
+    res.json({
+      success: true,
+      message: 'Project deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete project',
+      error: error.message
+    });
+  }
+});
+
 // Order/Revenue analytics routes
 router.get('/orders', async (req, res) => {
   try {

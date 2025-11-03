@@ -1,6 +1,7 @@
 const PortfolioProject = require('../models/portfolio_project');
 const PortfolioCategory = require('../models/portfolio_category');
 const { authenticateToken } = require('../middleware/auth');
+const { pool } = require('../../db');
 
 class PortfolioController {
   // Get all projects
@@ -116,6 +117,15 @@ class PortfolioController {
   static async createProject(req, res) {
     try {
       const projectData = req.body;
+
+      // Validate required fields
+      if (!projectData.title || !projectData.description) {
+        return res.status(400).json({
+          success: false,
+          message: 'Title and description are required'
+        });
+      }
+
       const project = await PortfolioProject.create(projectData);
       res.status(201).json({
         success: true,

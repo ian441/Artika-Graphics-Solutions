@@ -32,18 +32,16 @@ const createTables = async () => {
         category VARCHAR(100),
         image VARCHAR(500),
         description TEXT,
+        challenge TEXT,
+        solution TEXT,
+        results TEXT,
+        process TEXT,
         duration VARCHAR(100),
         featured BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
-
-    // Drop old columns if they exist
-    await pool.query(`ALTER TABLE portfolio_projects DROP COLUMN IF EXISTS challenge`);
-    await pool.query(`ALTER TABLE portfolio_projects DROP COLUMN IF EXISTS solution`);
-    await pool.query(`ALTER TABLE portfolio_projects DROP COLUMN IF EXISTS results`);
-    await pool.query(`ALTER TABLE portfolio_projects DROP COLUMN IF EXISTS process`);
 
     // Create contact_submissions table
     await pool.query(`
@@ -135,6 +133,15 @@ const createTables = async () => {
 // Insert sample data
 const insertSampleData = async () => {
   try {
+    // Check if sample data already exists
+    const existingProjects = await pool.query('SELECT COUNT(*) FROM portfolio_projects');
+    const projectCount = parseInt(existingProjects.rows[0].count);
+
+    if (projectCount > 0) {
+      console.log('Sample data already exists, skipping insertion');
+      return;
+    }
+
     // Insert sample categories
     await pool.query(`
       INSERT INTO portfolio_categories (name, description) VALUES

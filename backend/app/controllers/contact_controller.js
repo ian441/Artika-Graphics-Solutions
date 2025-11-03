@@ -182,16 +182,33 @@ class ContactController {
   static async markAsRead(req, res) {
     try {
       const { id } = req.params;
+
+      // Validate contact ID
+      if (!id || isNaN(parseInt(id))) {
+        return res.status(400).json({
+          success: false,
+          message: 'Valid contact ID is required'
+        });
+      }
+
+      console.log(`Marking contact submission ${id} as read`);
+
       const submission = await ContactSubmission.findById(id);
 
       if (!submission) {
+        console.log(`Contact submission ${id} not found`);
         return res.status(404).json({
           success: false,
           message: 'Submission not found'
         });
       }
 
+      console.log(`Found submission ${id}, current is_read status: ${submission.is_read}`);
+
       const updatedSubmission = await submission.update({ is_read: true });
+
+      console.log(`Successfully marked contact submission ${id} as read`);
+
       res.json({
         success: true,
         message: 'Submission marked as read',
@@ -199,6 +216,20 @@ class ContactController {
       });
     } catch (error) {
       console.error('Error marking submission as read:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        contactId: req.params.id
+      });
+
+      // Check for specific database errors
+      if (error.code === '23505') { // unique_violation
+        return res.status(409).json({
+          success: false,
+          message: 'Submission already marked as read'
+        });
+      }
+
       res.status(500).json({
         success: false,
         message: 'Failed to mark submission as read',

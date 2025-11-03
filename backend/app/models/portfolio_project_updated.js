@@ -98,6 +98,12 @@ class PortfolioProject {
       paramCount++;
     }
 
+    if (filters.search) {
+      query += ` AND (title ILIKE $${paramCount} OR client ILIKE $${paramCount} OR description ILIKE $${paramCount})`;
+      values.push(`%${filters.search}%`);
+      paramCount++;
+    }
+
     if (filters.limit) {
       query += ` LIMIT $${paramCount}`;
       values.push(filters.limit);

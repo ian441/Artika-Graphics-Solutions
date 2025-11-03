@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { fetchPortfolioProjects, fetchPortfolioCategories } from '../services/api';
 import { DEFAULT_CONFIG } from '../config';
 
@@ -10,6 +10,7 @@ const Portfolio = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const loadData = async () => {
@@ -43,9 +44,14 @@ const Portfolio = () => {
     ...categories.map(cat => ({ id: cat.id, label: cat.label }))
   ];
 
-  const filteredProjects = activeFilter === 'all' 
-    ? portfolioData 
-    : portfolioData.filter(project => project.category === activeFilter);
+  const filteredProjects = (activeFilter === 'all'
+    ? portfolioData
+    : portfolioData.filter(project => project.category === activeFilter))
+    .filter(project =>
+      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.client.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   const displayedProjects = filteredProjects.slice(0, visibleProjects);
 
@@ -55,6 +61,16 @@ const Portfolio = () => {
 
   const handleLoadMore = () => {
     setVisibleProjects(prev => Math.min(prev + DEFAULT_CONFIG.portfolio.itemsPerPage, filteredProjects.length));
+  };
+
+  const handleSearchChange = useCallback((e) => {
+    setSearchQuery(e.target.value);
+    setVisibleProjects(DEFAULT_CONFIG.portfolio.itemsPerPage);
+  }, []);
+
+  const clearSearch = () => {
+    setSearchQuery('');
+    setVisibleProjects(DEFAULT_CONFIG.portfolio.itemsPerPage);
   };
 
   if (loading) {
@@ -86,9 +102,9 @@ const Portfolio = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Portfolio Hero Section */}
-      <section className="relative pt-24 pb-16 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <section className="relative pt-24 pb-16 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="space-y-6">
             <h1 className="text-5xl lg:text-6xl font-bold text-gray-900">
@@ -116,9 +132,32 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* Category Filter */}
+      {/* Search and Category Filter */}
       <section className="py-8 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6">
+          {/* Search Bar */}
+          <div className="flex justify-center mb-6">
+            <div className="relative w-full max-w-md">
+              <input
+                type="text"
+                placeholder="Search projects..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="w-full px-4 py-3 pl-12 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <i className="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              {searchQuery && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Category Filter */}
           <div className="flex flex-wrap justify-center gap-4">
             {filterCategories.map((category) => (
               <button

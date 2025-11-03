@@ -12,8 +12,20 @@
   },
   "babel": {
     "presets": [
-      ["@babel/preset-env", { "targets": { "node": "current" } }],
-      ["@babel/preset-react", { "runtime": "automatic" }]
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ],
+      [
+        "@babel/preset-react",
+        {
+          "runtime": "automatic"
+        }
+      ]
     ]
   },
   "jest": {
@@ -31,6 +43,7 @@
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
+    "framer-motion": "^12.23.24",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.2.0",

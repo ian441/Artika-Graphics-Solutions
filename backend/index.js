@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { pool, createTables, insertSampleData } = require('./db');
-const { authRoutes, portfolioRoutes, contactRoutes, adminRoutes,  userRoutes, projectRoutes, messageRoutes, favoriteRoutes, orderRoutes } = require('./app/routes/__init__');
+const { authRoutes, portfolioRoutes, contactRoutes, adminRoutes,  userRoutes, projectRoutes, messageRoutes, favoriteRoutes, orderRoutes, blogRoutes } = require('./app/routes/__init__');
 require('dotenv').config();
 
 const app = express();
@@ -39,6 +39,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/blog', blogRoutes);
 
 // Catch all handler: send back React's index.html file for client-side routing
 if (process.env.NODE_ENV === 'production') {

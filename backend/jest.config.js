@@ -1,4 +1,5 @@
 module.exports = {
+  preset: null,
   testEnvironment: 'node',
   collectCoverage: true,
   coverageDirectory: 'coverage',
@@ -10,4 +11,7 @@ module.exports = {
     '**/__tests__/**/*.test.js',
   ],
   setupFilesAfterEnv: ['./test-setup.js'],
+  transform: {
+    '^.+\\.js$': 'babel-jest',
+  },
 };

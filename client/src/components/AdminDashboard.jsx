@@ -19,6 +19,7 @@ import {
   getAdminProjects,
   updateAdminProjectStatus,
   getAdminProjectStats,
+  deleteAdminProject,
   getAdminOrders,
   getAdminOrderStats,
   getAdminMessages,
@@ -70,6 +71,15 @@ const AdminDashboard = () => {
     process: '',
     duration: '',
     featured: false
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [statusForm, setStatusForm] = useState({
+    status: '',
+    assigned_to: '',
+    deadline: ''
   });
 
   useEffect(() => {
@@ -191,8 +201,8 @@ const AdminDashboard = () => {
     e.preventDefault();
     try {
       await sendAdminMessage({
-        recipient_id: messageForm.recipientId,
-        subject: messageForm.subject,
+        user_id: messageForm.recipientId,
+        title: messageForm.subject,
         content: messageForm.content
       });
       // Reset form
@@ -251,6 +261,131 @@ const AdminDashboard = () => {
       } catch (err) {
         console.error('Error deleting contact:', err);
         alert('Failed to delete contact');
+      }
+    }
+  };
+
+  const handlePortfolioSubmit = async (e) => {
+    e.preventDefault();
+    setPortfolioLoading(true);
+    try {
+      if (editingProject) {
+        await updateAdminPortfolioProject(editingProject.id, portfolioForm);
+      } else {
+        await createAdminPortfolioProject(portfolioForm);
+      }
+      // Reset form
+      resetPortfolioForm();
+      setShowCreateForm(false);
+      setEditingProject(null);
+      // Reload projects
+      const response = await getAdminPortfolioProjects();
+      setPortfolioProjects(response.data || []);
+      alert('Project saved successfully!');
+    } catch (err) {
+      console.error('Error saving project:', err);
+      const errorMessage = err.response?.data?.message || 'Failed to save project';
+      alert(`Error: ${errorMessage}`);
+    } finally {
+      setPortfolioLoading(false);
+    }
+  };
+
+  const resetPortfolioForm = () => {
+    setPortfolioForm({
+      title: '',
+      client: '',
+      category: '',
+      image: '',
+      description: '',
+      challenge: '',
+      solution: '',
+      results: '',
+      process: '',
+      duration: '',
+      featured: false
+    });
+  };
+
+  const handleEditPortfolio = (project) => {
+    setEditingProject(project);
+    setPortfolioForm({
+      title: project.title || '',
+      client: project.client || '',
+      category: project.category || '',
+      image: project.image || '',
+      description: project.description || '',
+      challenge: project.challenge || '',
+      solution: project.solution || '',
+      results: project.results || '',
+      process: project.process || '',
+      duration: project.duration || '',
+      featured: project.featured || false
+    });
+    setShowCreateForm(true);
+  };
+
+  const handleDeletePortfolio = async (projectId) => {
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      try {
+        await deleteAdminPortfolioProject(projectId);
+        // Reload projects
+        const response = await getAdminPortfolioProjects();
+        setPortfolioProjects(response.data || []);
+        alert('Project deleted successfully!');
+      } catch (err) {
+        console.error('Error deleting project:', err);
+        alert('Failed to delete project');
+      }
+    }
+  };
+
+  const handleOpenStatusModal = (project) => {
+    setSelectedProject(project);
+    setStatusForm({
+      status: project.status || '',
+      assigned_to: project.assigned_to || '',
+      deadline: project.deadline ? new Date(project.deadline).toISOString().split('T')[0] : ''
+    });
+    setShowStatusModal(true);
+  };
+
+  const handleCloseStatusModal = () => {
+    setShowStatusModal(false);
+    setSelectedProject(null);
+    setStatusForm({
+      status: '',
+      assigned_to: '',
+      deadline: ''
+    });
+  };
+
+  const handleStatusSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await updateAdminProjectStatus(selectedProject.id, statusForm);
+      // Reload projects
+      const projectsResponse = await getAdminProjects(filters);
+      setProjects(projectsResponse.data || []);
+      alert('Project status updated successfully!');
+      handleCloseStatusModal();
+    } catch (err) {
+      console.error('Error updating project status:', err);
+      alert('Failed to update project status');
+    }
+  };
+
+  const handleDeleteProject = async (projectId) => {
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      try {
+        await deleteAdminProject(projectId);
+        // Reload projects
+        const projectsResponse = await getAdminProjects(filters);
+        setProjects(projectsResponse.data || []);
+        alert('Project deleted successfully!');
+      } catch (err) {
+        console.error('Error deleting project:', err);
+        alert('Failed to delete project');
       }
     }
   };
@@ -764,16 +899,83 @@ const AdminDashboard = () => {
                     <p className="text-gray-600">{project.description}</p>
                     <p className="text-sm text-gray-500">Status: {project.status}</p>
                     <div className="mt-2 flex space-x-2">
-                      <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">
+                      <button
+                        onClick={() => handleOpenStatusModal(project)}
+                        className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                      >
                         Update Status
                       </button>
-                      <button className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700">
+                      <button
+                        onClick={() => handleDeleteProject(project.id)}
+                        className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
+                      >
                         Delete
                       </button>
                     </div>
                   </div>
                 ))}
               </div>
+
+              {/* Status Update Modal */}
+              {showStatusModal && (
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                  <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                    <div className="mt-3">
+                      <h3 className="text-lg font-medium text-gray-900 mb-4">Update Project Status</h3>
+                      <form onSubmit={handleStatusSubmit} className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Status</label>
+                          <select
+                            value={statusForm.status}
+                            onChange={(e) => setStatusForm({ ...statusForm, status: e.target.value })}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            required
+                          >
+                            <option value="">Select Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Assigned To</label>
+                          <input
+                            type="text"
+                            value={statusForm.assigned_to}
+                            onChange={(e) => setStatusForm({ ...statusForm, assigned_to: e.target.value })}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter assignee name"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Deadline</label>
+                          <input
+                            type="date"
+                            value={statusForm.deadline}
+                            onChange={(e) => setStatusForm({ ...statusForm, deadline: e.target.value })}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          />
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                          >
+                            Update Status
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleCloseStatusModal}
+                            className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

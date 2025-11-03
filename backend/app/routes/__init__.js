@@ -8,6 +8,7 @@ const projectRoutes = require('./project_routes');
 const messageRoutes = require('./message_routes');
 const favoriteRoutes = require('./favorite_routes');
 const orderRoutes = require('./order_routes');
+const blogRoutes = require('./blog_routes');
 
 // Export all routes
 module.exports = {
@@ -19,5 +20,6 @@ module.exports = {
   projectRoutes,
   messageRoutes,
   favoriteRoutes,
-  orderRoutes
+  orderRoutes,
+  blogRoutes
 };

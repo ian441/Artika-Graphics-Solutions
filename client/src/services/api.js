@@ -2,35 +2,21 @@ import { API_BASE_URL } from '../config';
 
 const apiFetch = async (url, options = {}) => {
   try {
-    const token = localStorage.getItem('token');
-    const headers = {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    };
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_BASE_URL}${url}`, {
-      headers,
+    const fullUrl = `${API_BASE_URL}${url}`;
+    const response = await fetch(fullUrl, {
       ...options,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
     });
 
-    if (response.status === 401) {
-      throw new Error('UNAUTHORIZED');
-    }
-
-    if (response.status === 403) {
-      throw new Error('FORBIDDEN');
-    }
-
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    return response.json();
+    return await response.json();
   } catch (error) {
     console.error('API fetch error:', error);
     throw error;
@@ -48,15 +34,16 @@ export const createContact = async (contactData) => {
 // Portfolio API
 export const fetchPortfolioProjects = async (params = {}) => {
   const queryParams = new URLSearchParams();
-  
+
   if (params.page) queryParams.append('page', params.page);
   if (params.limit) queryParams.append('limit', params.limit);
   if (params.category && params.category !== 'all') queryParams.append('category', params.category);
   if (params.featured) queryParams.append('featured', params.featured);
+  if (params.search) queryParams.append('search', params.search);
 
   const queryString = queryParams.toString();
   const url = queryString ? `/portfolio?${queryString}` : '/portfolio';
-  
+
   return apiFetch(url);
 };
 
@@ -476,6 +463,16 @@ export const getAdminProjectStats = async () => {
   });
 };
 
+export const deleteAdminProject = async (id) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/admin/projects/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
 // Admin Orders/Revenue API
 export const getAdminOrders = async () => {
   const token = localStorage.getItem('token');
@@ -613,6 +610,15 @@ export const deleteAdminContact = async (id) => {
       'Authorization': `Bearer ${token}`,
     },
   });
+};
+
+// Blog API
+export const fetchPublishedBlogPosts = async (limit = 10, offset = 0) => {
+  return apiFetch(`/blog/published?limit=${limit}&offset=${offset}`);
+};
+
+export const fetchBlogPostById = async (id) => {
+  return apiFetch(`/blog/${id}`);
 };
 
 // Admin Messages API

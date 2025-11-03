@@ -1,9 +1,14 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Services = () => {
   const [selectedTier, setSelectedTier] = useState('professional');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   const serviceCategories = [
     {
@@ -108,85 +113,123 @@ const Services = () => {
     : serviceCategories.filter(cat => cat.id === selectedCategory);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes glow {
+          0%, 100% {
+            box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+          }
+          50% {
+            box-shadow: 0 0 40px rgba(147, 51, 234, 0.6);
+          }
+        }
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out forwards;
+        }
+        .animate-glow {
+          animation: glow 2s ease-in-out infinite;
+        }
+        .glass-morphism {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+      `}</style>
       
       {/* Hero Section */}
-      <section
-        className="relative w-full bg-no-repeat bg-center bg-contain"
-        style={{
-          backgroundImage: 'url(/images/favpng_85a32b7ee62c40f2dd546e0d920aed4b.png)',
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          height: '80vh',
-        }}
-      >
-        <div className="absolute inset-0 bg-black opacity-80"></div>
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex items-center justify-center h-full">
-          <div>
-            <h1 className="text-5xl font-bold text-white mb-6">
+      <section className={`relative w-full bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 overflow-hidden ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 animate-glow"></div>
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex items-center justify-center h-[80vh]">
+          <div className="transform transition-all duration-1000 ease-out">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent mb-6 animate-fade-in-up">
               Creative Design Services
             </h1>
-            <p className="text-xl text-white max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-purple-100 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-300">
               Transform your brand with our professional design services. From stunning visuals to engaging motion graphics,
               we bring your creative vision to life with precision and artistic excellence.
             </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-500">
+              <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-purple-500/25">
+                <i className="fas fa-rocket mr-2"></i>
+                Get Started
+              </button>
+              <button className="border-2 border-purple-300 text-purple-300 hover:bg-purple-300 hover:text-slate-900 px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
+                <i className="fas fa-play mr-2"></i>
+                Watch Demo
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Service Categories */}
-      <section id="services" className="py-20 bg-gradient-to-r from-black to-gray-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">What We Offer</h2>
-            <p className="text-lg text-white max-w-2xl mx-auto">
+      <section id="services" className="py-20 bg-gradient-to-br from-slate-800 via-purple-800 to-slate-800 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-blue-600/10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent mb-4">What We Offer</h2>
+            <p className="text-lg md:text-xl text-purple-100 max-w-2xl mx-auto leading-relaxed">
               Discover our comprehensive range of services designed to meet your business needs
             </p>
           </div>
 
           {/* Category Filter */}
-          <div className="flex justify-center mb-12">
-            <div className="flex space-x-4 bg-gray-100 rounded-lg p-1">
+          <div className="flex justify-center mb-12 animate-fade-in-up delay-300">
+            <div className="glass-morphism rounded-full p-2 flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedCategory('all')}
-                className={`px-6 py-2 rounded-md transition-all cursor-pointer whitespace-nowrap !rounded-button ${
+                className={`px-6 py-3 rounded-full transition-all duration-300 cursor-pointer font-semibold ${
                   selectedCategory === 'all'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg animate-glow'
+                    : 'text-purple-200 hover:text-white hover:bg-purple-600/20'
                 }`}
               >
                 All Services
               </button>
-              
+
               <button
                 onClick={() => setSelectedCategory('brand-design')}
-                className={`px-6 py-2 rounded-md transition-all cursor-pointer whitespace-nowrap !rounded-button ${
+                className={`px-6 py-3 rounded-full transition-all duration-300 cursor-pointer font-semibold ${
                   selectedCategory === 'brand-design'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg animate-glow'
+                    : 'text-purple-200 hover:text-white hover:bg-purple-600/20'
                 }`}
               >
                 Branding
               </button>
-              
+
               <button
                 onClick={() => setSelectedCategory('illustration')}
-                className={`px-6 py-2 rounded-md transition-all cursor-pointer whitespace-nowrap !rounded-button ${
+                className={`px-6 py-3 rounded-full transition-all duration-300 cursor-pointer font-semibold ${
                   selectedCategory === 'illustration'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg animate-glow'
+                    : 'text-purple-200 hover:text-white hover:bg-purple-600/20'
                 }`}
               >
                 Illustration
               </button>
-              
+
               <button
                 onClick={() => setSelectedCategory('motion-graphics')}
-                className={`px-6 py-2 rounded-md transition-all cursor-pointer whitespace-nowrap !rounded-button ${
+                className={`px-6 py-3 rounded-full transition-all duration-300 cursor-pointer font-semibold ${
                   selectedCategory === 'motion-graphics'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-600 hover:text-blue-600'
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg animate-glow'
+                    : 'text-purple-200 hover:text-white hover:bg-purple-600/20'
                 }`}
               >
                 Motion
@@ -195,36 +238,38 @@ const Services = () => {
           </div>
 
           {/* Service Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredCategories.map((service) => (
-              <div 
-                key={service.id} 
-                className="bg-black rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden group cursor-pointer"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-in-up delay-500">
+            {filteredCategories.map((service, index) => (
+              <div
+                key={service.id}
+                className="glass-morphism rounded-2xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-500 overflow-hidden group cursor-pointer transform hover:scale-105 hover:-translate-y-2"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="h-48 overflow-hidden">
+                <div className="h-48 overflow-hidden relative">
                   <img
                     src={service.image}
                     alt={service.title}
-                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover object-top group-hover:scale-110 transition-transform duration-500"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-purple-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
-                
-                <div className="p-8">
+
+                <div className="p-8 relative">
                   <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                      <i className={`${service.icon} text-blue-600 text-xl`}></i>
+                    <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                      <i className={`${service.icon} text-white text-xl`}></i>
                     </div>
-                    <h3 className="text-xl font-bold text-white">{service.title}</h3>
+                    <h3 className="text-xl font-bold text-white group-hover:text-purple-200 transition-colors">{service.title}</h3>
                   </div>
-                  
-                  <p className="text-gray-600 mb-6 leading-relaxed">
+
+                  <p className="text-purple-100 mb-6 leading-relaxed group-hover:text-white transition-colors">
                     {service.description}
                   </p>
-                  
-                  <a href="#" className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700 transition-colors cursor-pointer">
+
+                  <button className="inline-flex items-center text-purple-300 font-semibold hover:text-purple-100 transition-colors group-hover:translate-x-2 transform duration-300">
                     Learn More
-                    <i className="fas fa-arrow-right ml-2"></i>
-                  </a>
+                    <i className="fas fa-arrow-right ml-2 group-hover:ml-4 transition-all"></i>
+                  </button>
                 </div>
               </div>
             ))}
@@ -233,55 +278,59 @@ const Services = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Choose Your Plan</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+      <section id="pricing" className="py-20 bg-gradient-to-br from-slate-50 via-purple-50 to-slate-50 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 to-blue-100/20"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 to-purple-900 bg-clip-text text-transparent mb-4">Choose Your Plan</h2>
+            <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
               Select the perfect plan that fits your business needs and budget
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {pricingTiers.map((tier) => (
-              <div 
-                key={tier.id} 
-                className={`relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden ${
-                  tier.recommended ? 'ring-2 ring-blue-500 transform scale-105' : ''
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto animate-fade-in-up delay-300">
+            {pricingTiers.map((tier, index) => (
+              <div
+                key={tier.id}
+                className={`relative glass-morphism rounded-2xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-500 overflow-hidden transform hover:scale-105 hover:-translate-y-2 ${
+                  tier.recommended ? 'ring-2 ring-purple-500 animate-glow' : ''
                 }`}
+                style={{ animationDelay: `${index * 0.2}s` }}
               >
-                
+
                 {tier.recommended && (
-                  <div className="absolute top-0 left-0 right-0 bg-blue-500 text-white text-center py-2 text-sm font-semibold">
+                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-center py-3 text-sm font-semibold">
                     Most Popular
                   </div>
                 )}
-                
-                <div className={`p-8 ${tier.recommended ? 'pt-12' : ''}`}>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{tier.name}</h3>
-                  <p className="text-gray-600 mb-6">{tier.description}</p>
-                  
+
+                <div className={`p-8 ${tier.recommended ? 'pt-16' : ''} relative`}>
+                  <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">{tier.name}</h3>
+                  <p className="text-slate-600 mb-6">{tier.description}</p>
+
                   <div className="mb-8">
-                    <span className="text-4xl font-bold text-gray-900">{tier.price}</span>
-                    <span className="text-gray-600">{tier.period}</span>
+                    <span className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">{tier.price}</span>
+                    <span className="text-slate-500 text-lg">{tier.period}</span>
                   </div>
-                  
+
                   <ul className="space-y-4 mb-8">
                     {tier.features.map((feature, index) => (
                       <li key={index} className="flex items-center">
-                        <i className="fas fa-check text-green-500 mr-3"></i>
-                        <span className="text-gray-700">{feature}</span>
+                        <div className="w-5 h-5 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center mr-3 shadow-lg">
+                          <i className="fas fa-check text-white text-xs"></i>
+                        </div>
+                        <span className="text-slate-700">{feature}</span>
                       </li>
                     ))}
                   </ul>
-                  
+
                   <button
                     onClick={() => setSelectedTier(tier.id)}
-                    className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors cursor-pointer whitespace-nowrap !rounded-button ${
+                    className={`w-full py-4 px-6 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-xl ${
                       tier.recommended
-                        ? 'bg-blue-600 text-white hover:bg-blue-700'
-                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-purple-500/25'
+                        : 'bg-gradient-to-r from-slate-100 to-slate-200 text-slate-900 hover:from-slate-200 hover:to-slate-300'
                     }`}
                   >
                     Get Started
@@ -294,73 +343,78 @@ const Services = () => {
       </section>
 
       {/* Service Details */}
-      <section className="py-10 bg-black min-h-[50vh]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-blue-600/10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-10 animate-fade-in-up">
             <div>
-              <h3 className="text-3xl font-bold text-white mb-6">Why Choose Our Services?</h3>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-4 mt-1">
-                    <i className="fas fa-rocket text-blue-600"></i>
+              <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent mb-8">Why Choose Our Services?</h3>
+
+              <div className="space-y-8">
+                <div className="flex items-start group">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mr-6 mt-1 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <i className="fas fa-rocket text-white text-lg"></i>
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold text-blue-800 mb-2">Fast Delivery</h4>
-                    <p className="text-white">Quick turnaround times without compromising on quality</p>
+                    <h4 className="text-xl font-semibold text-purple-200 mb-3 group-hover:text-white transition-colors">Fast Delivery</h4>
+                    <p className="text-purple-100 leading-relaxed group-hover:text-white transition-colors">Quick turnaround times without compromising on quality</p>
                   </div>
                 </div>
-                
-                <div className="flex items-start">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-4 mt-1">
-                    <i className="fas fa-shield-alt text-blue-600"></i>
+
+                <div className="flex items-start group">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mr-6 mt-1 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <i className="fas fa-shield-alt text-white text-lg"></i>
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold text-blue-800 mb-2">Reliable Support</h4>
-                    <p className="text-white">24/7 customer support to assist you whenever needed</p>
+                    <h4 className="text-xl font-semibold text-purple-200 mb-3 group-hover:text-white transition-colors">Reliable Support</h4>
+                    <p className="text-purple-100 leading-relaxed group-hover:text-white transition-colors">24/7 customer support to assist you whenever needed</p>
                   </div>
                 </div>
-                
-                <div className="flex items-start">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-4 mt-1">
-                    <i className="fas fa-star text-blue-600"></i>
+
+                <div className="flex items-start group">
+                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mr-6 mt-1 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <i className="fas fa-star text-white text-lg"></i>
                   </div>
                   <div>
-                    <h4 className="text-lg font-semibold text-blue-800 mb-2">Premium Quality</h4>
-                    <p className="text-white">Industry-leading standards and best practices</p>
+                    <h4 className="text-xl font-semibold text-purple-200 mb-3 group-hover:text-white transition-colors">Premium Quality</h4>
+                    <p className="text-purple-100 leading-relaxed group-hover:text-white transition-colors">Industry-leading standards and best practices</p>
                   </div>
                 </div>
               </div>
             </div>
-            
-            <div className="relative">
-              <img
-                src="/images/favpng_75d90b3a4a334f73e172d8916a8c2e2d.png"
-                alt="Professional team working"
-                className="w-full min-h-[200px] object-cover object-top rounded-xl shadow-lg"
-              />
+
+            <div className="relative animate-fade-in-up delay-300">
+              <div className="glass-morphism rounded-2xl p-8 shadow-2xl">
+                <img
+                  src="/images/favpng_75d90b3a4a334f73e172d8916a8c2e2d.png"
+                  alt="Professional team working"
+                  className="w-full min-h-[300px] object-cover object-top rounded-xl shadow-lg"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-purple-900/30 to-transparent rounded-2xl"></div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-gray-800 to-black">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">Ready to Get Started?</h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+      <section className="py-20 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-blue-600/10"></div>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center animate-fade-in-up">
+          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent mb-6">Ready to Get Started?</h2>
+          <p className="text-xl md:text-2xl text-purple-100 mb-8 max-w-2xl mx-auto leading-relaxed">
             Transform your business today with our comprehensive service solutions.
             Join thousands of satisfied clients who trust us with their success.
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors cursor-pointer whitespace-nowrap !rounded-button">
+
+          <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up delay-300">
+            <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-purple-500/25">
               <i className="fas fa-calendar-alt mr-2"></i>
               Book Now
             </button>
-            
-            <button className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors cursor-pointer whitespace-nowrap !rounded-button">
+
+            <button className="border-2 border-purple-300 text-purple-300 hover:bg-purple-300 hover:text-slate-900 px-8 py-4 rounded-full font-semibold transition-all duration-300 transform hover:scale-105">
               <i className="fas fa-phone mr-2"></i>
               Contact Us
             </button>
@@ -369,66 +423,67 @@ const Services = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 to-blue-600/5"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 animate-fade-in-up">
             <div>
-              <div className="text-2xl font-bold text-blue-400 mb-4">ServicePro</div>
-              <p className="text-gray-400 mb-4">
+              <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-6">Artika Graphics</div>
+              <p className="text-purple-100 mb-6 leading-relaxed">
                 Delivering exceptional digital solutions that drive business growth and success.
               </p>
-              
-              <div className="flex space-x-4">
-                <i className="fab fa-facebook text-gray-400 hover:text-blue-400 cursor-pointer"></i>
-                <i className="fab fa-twitter text-gray-400 hover:text-blue-400 cursor-pointer"></i>
-                <i className="fab fa-linkedin text-gray-400 hover:text-blue-400 cursor-pointer"></i>
-                <i className="fab fa-instagram text-gray-400 hover:text-blue-400 cursor-pointer"></i>
+
+              <div className="flex space-x-6">
+                <i className="fab fa-facebook text-purple-300 hover:text-purple-100 cursor-pointer transition-colors text-xl"></i>
+                <i className="fab fa-twitter text-purple-300 hover:text-purple-100 cursor-pointer transition-colors text-xl"></i>
+                <i className="fab fa-linkedin text-purple-300 hover:text-purple-100 cursor-pointer transition-colors text-xl"></i>
+                <i className="fab fa-instagram text-purple-300 hover:text-purple-100 cursor-pointer transition-colors text-xl"></i>
               </div>
             </div>
-            
+
             <div>
-              <h4 className="text-lg font-semibold mb-4">Services</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white cursor-pointer">Web Design</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white cursor-pointer">Development</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white cursor-pointer">Digital Marketing</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white cursor-pointer">Consulting</a></li>
+              <h4 className="text-xl font-semibold mb-6 text-purple-200">Services</h4>
+              <ul className="space-y-4">
+                <li><a href="#" className="text-purple-100 hover:text-white cursor-pointer transition-colors">Web Design</a></li>
+                <li><a href="#" className="text-purple-100 hover:text-white cursor-pointer transition-colors">Development</a></li>
+                <li><a href="#" className="text-purple-100 hover:text-white cursor-pointer transition-colors">Digital Marketing</a></li>
+                <li><a href="#" className="text-purple-100 hover:text-white cursor-pointer transition-colors">Consulting</a></li>
               </ul>
             </div>
-            
+
             <div>
-              <h4 className="text-lg font-semibold mb-4">Company</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white cursor-pointer">About Us</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white cursor-pointer">Careers</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white cursor-pointer">Blog</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white cursor-pointer">Contact</a></li>
+              <h4 className="text-xl font-semibold mb-6 text-purple-200">Company</h4>
+              <ul className="space-y-4">
+                <li><a href="#" className="text-purple-100 hover:text-white cursor-pointer transition-colors">About Us</a></li>
+                <li><a href="#" className="text-purple-100 hover:text-white cursor-pointer transition-colors">Careers</a></li>
+                <li><a href="#" className="text-purple-100 hover:text-white cursor-pointer transition-colors">Blog</a></li>
+                <li><a href="#" className="text-purple-100 hover:text-white cursor-pointer transition-colors">Contact</a></li>
               </ul>
             </div>
-            
+
             <div>
-              <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
-              <div className="space-y-2">
-                <p className="text-gray-400 flex items-center">
-                  <i className="fas fa-phone mr-2"></i>
+              <h4 className="text-xl font-semibold mb-6 text-purple-200">Contact Info</h4>
+              <div className="space-y-4">
+                <p className="text-purple-100 flex items-center">
+                  <i className="fas fa-phone mr-3 text-purple-300"></i>
                   +1 (555) 123-4567
                 </p>
-                <p className="text-gray-400 flex items-center">
-                  <i className="fas fa-envelope mr-2"></i>
-                  hello@servicepro.com
+                <p className="text-purple-100 flex items-center">
+                  <i className="fas fa-envelope mr-3 text-purple-300"></i>
+                  hello@artikagraphics.com
                 </p>
-                <p className="text-gray-400 flex items-center">
-                  <i className="fas fa-map-marker-alt mr-2"></i>
+                <p className="text-purple-100 flex items-center">
+                  <i className="fas fa-map-marker-alt mr-3 text-purple-300"></i>
                   123 Business St, City, State 12345
                 </p>
               </div>
             </div>
           </div>
-          
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center">
-            <p className="text-gray-400">
-              © 2025 ServicePro. All rights reserved. | Privacy Policy | Terms of Service
+
+          <div className="border-t border-purple-800/50 mt-16 pt-8 text-center">
+            <p className="text-purple-200">
+              © 2025 Artika Graphics. All rights reserved. | Privacy Policy | Terms of Service
             </p>
           </div>
         </div>

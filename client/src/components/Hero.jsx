@@ -1,28 +1,31 @@
 // The exported code uses Tailwind CSS. Install Tailwind CSS in your dev environment to ensure all styles work.
 
 import React, { useEffect, useState } from 'react';
+import { fetchPublishedBlogPosts } from '../services/api';
 
 const Hero = () => {
   const [slideIn, setSlideIn] = useState(false);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [loadingBlogs, setLoadingBlogs] = useState(true);
 
   const featuredWorks = [
     {
       id: 1,
       title: 'Brand Identity Design',
       category: 'Branding',
-      image: 'https://reallygooddesigns.com/wp-content/uploads/2023/01/Nextra-Clothing-Brand-Identity.jpg'
+      image: '/images/brand design.jpg'
         },
     {
       id: 2,
       title: 'Website Redesign',
       category: 'Web Design',
-      image: 'https://www.mainteractive.com/wp-content/uploads/2017/08/revealing-our-2020-new-website-design-ma-interactive-blog-post-cover-img2.jpg'
+      image: '/images/Contact us business icon on computer keyboard with the globe _ Premium Photo.jpg'
         },
     {
       id: 3,
       title: 'Marketing Campaign',
       category: 'Digital Marketing',
-      image: 'https://turtl.co/hs-fs/hubfs/Blog%20imagery/Upwork-Hey-World-1024x640-1-768x480.jpeg?width=768&height=480&name=Upwork-Hey-World-1024x640-1-768x480.jpeg'    }
+      image: '/images/download (1).jpg'    }
   ];
 
   const testimonials = [
@@ -49,8 +52,67 @@ const Hero = () => {
     { number: '50+', label: 'Happy Clients' }
   ];
 
+  const artGallery = [
+    {
+      id: 1,
+      title: 'Abstract Dreams',
+      image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=500&fit=crop',
+      price: '$299',
+      description: 'A vibrant abstract piece capturing the essence of dreams and imagination.'
+    },
+    {
+      id: 2,
+      title: 'Urban Reflections',
+      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=500&fit=crop',
+      price: '$399',
+      description: 'Modern cityscape with reflective surfaces and geometric patterns.'
+    },
+    {
+      id: 3,
+      title: 'Nature\'s Symphony',
+      image: 'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=400&h=500&fit=crop',
+      price: '$249',
+      description: 'Organic forms and natural colors blending in harmonious composition.'
+    },
+    {
+      id: 4,
+      title: 'Digital Horizon',
+      image: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=400&h=500&fit=crop',
+      price: '$349',
+      description: 'Futuristic landscape exploring the intersection of technology and art.'
+    },
+    {
+      id: 5,
+      title: 'Emotional Depth',
+      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=500&fit=crop',
+      price: '$279',
+      description: 'Deep emotional expression through layered textures and colors.'
+    },
+    {
+      id: 6,
+      title: 'Geometric Harmony',
+      image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=500&fit=crop',
+      price: '$329',
+      description: 'Perfect balance of geometric shapes creating visual harmony.'
+    }
+  ];
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   useEffect(() => {
     setSlideIn(true);
+    // Fetch blog posts
+    const loadBlogs = async () => {
+      try {
+        const blogs = await fetchPublishedBlogPosts();
+        setBlogPosts(blogs.slice(0, 3)); // Show only first 3 blogs
+      } catch (error) {
+        console.error('Error fetching blog posts:', error);
+      } finally {
+        setLoadingBlogs(false);
+      }
+    };
+    loadBlogs();
   }, []);
 
   return (
@@ -90,8 +152,8 @@ const Hero = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <button className="!rounded-button bg-white text-blue-600 px-8 py-4 font-semibold hover:shadow-lg transition-all cursor-pointer">
-                    View Our Work
+                  <button onClick={() => document.getElementById('art-gallery').scrollIntoView({ behavior: 'smooth' })} className="!rounded-button bg-white text-blue-600 px-8 py-4 font-semibold hover:shadow-lg transition-all cursor-pointer">
+                    View Gallery
                   </button>
                   <button className="!rounded-button border-2 border-white text-white px-8 py-4 font-semibold hover:bg-orange-600  hover:text-blue-600 transition-all cursor-pointer">
                     Get Started
@@ -105,11 +167,12 @@ const Hero = () => {
                       <div className="text-sm text-white/80">{stat.label}</div>
                     </div>
                   ))}
-                </div>
+               </div>
               </div>
             </div>
           </div>
         </section>
+      
 
 
         {/* Featured Works Section */}
@@ -178,6 +241,104 @@ const Hero = () => {
               <button className="relative group inline-flex items-center px-10 py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white font-bold rounded-full overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:rotate-2 active:rotate-0">
                 <span className="relative z-10 flex items-center">
                   View All Projects
+                  <i className="fas fa-arrow-right ml-3 transition-transform group-hover:translate-x-2"></i>
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-red-500 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Blogs Section */}
+        <section className="py-20 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 relative overflow-hidden">
+          {/* Background Elements */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+            <div className="absolute top-60 right-20 w-48 h-48 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+            <div className="absolute bottom-40 left-1/4 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">Latest Insights</h2>
+              <p className="text-xl text-blue-100 max-w-2xl mx-auto leading-relaxed">
+                Stay updated with our latest thoughts on design, technology, and creative solutions
+              </p>
+              <div className="w-24 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto mt-6 rounded-full"></div>
+            </div>
+
+            {loadingBlogs ? (
+              <div className="flex justify-center items-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {blogPosts.map((blog, index) => (
+                  <div
+                    key={blog.id}
+                    className={`relative group cursor-pointer transform transition-all duration-700 hover:scale-105 hover:-translate-y-2 ${
+                      index % 3 === 0 ? 'hover:rotate-1' : index % 3 === 1 ? 'hover:-rotate-1' : 'hover:rotate-2'
+                    }`}
+                  >
+                    <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
+                      {/* Blog Image */}
+                      {blog.image && (
+                        <div className="relative h-48 overflow-hidden">
+                          <img
+                            src={blog.image}
+                            alt={blog.title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                        </div>
+                      )}
+
+                      {/* Blog Content */}
+                      <div className="p-6">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <span className="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                            {blog.category || 'Blog'}
+                          </span>
+                          <span className="text-gray-300 text-sm">
+                            {new Date(blog.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+
+                        <h3 className="text-xl font-bold text-white mb-3 leading-tight group-hover:text-blue-300 transition-colors">
+                          {blog.title}
+                        </h3>
+
+                        <p className="text-gray-300 leading-relaxed mb-4 line-clamp-3">
+                          {blog.excerpt || blog.content?.substring(0, 120) + '...'}
+                        </p>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                              <i className="fas fa-user text-white text-xs"></i>
+                            </div>
+                            <span className="text-sm text-gray-300">{blog.author || 'Admin'}</span>
+                          </div>
+
+                          <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i className="fas fa-arrow-right text-blue-300"></i>
+                            <span className="text-sm text-blue-300">Read More</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Hover glow effect */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="text-center mt-16">
+              <button className="relative group inline-flex items-center px-10 py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white font-bold rounded-full overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:rotate-2 active:rotate-0">
+                <span className="relative z-10 flex items-center">
+                  View All Blogs
                   <i className="fas fa-arrow-right ml-3 transition-transform group-hover:translate-x-2"></i>
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-red-500 opacity-0 group-hover:opacity-20 transition-opacity"></div>
@@ -347,78 +508,155 @@ const Hero = () => {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-white via-gray-50 to-white relative overflow-hidden">
-          {/* Subtle Chaotic Elements */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-10 left-10 w-32 h-32 border-2 border-blue-600 rounded-full blur-2xl"></div>
-            <div className="absolute bottom-10 right-10 w-24 h-24 bg-purple-500 rounded-full opacity-20 blur-xl"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 border border-red-500 rounded-full opacity-10 blur-3xl"></div>
+        {/* Art Gallery Section */}
+        <div id="art-gallery" className="py-20 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 relative overflow-hidden">
+          {/* Background Elements */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-20 left-10 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+            <div className="absolute top-60 right-20 w-48 h-48 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+            <div className="absolute bottom-40 left-1/4 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
           </div>
 
-          <div className="max-w-6xl mx-auto px-6 relative z-10">
-            <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-blue-700 rounded-3xl p-12 lg:p-16 text-center text-white shadow-2xl relative overflow-hidden">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/20 to-transparent"></div>
-                <div className="absolute top-10 right-10 w-20 h-20 border border-white rounded-full"></div>
-                <div className="absolute bottom-10 left-10 w-16 h-16 bg-white/20 rounded-full"></div>
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl lg:text-5xl font-bold text-blue mb-4">Art Gallery</h2>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                Discover our exclusive collection of contemporary paintings and artistic masterpieces
+              </p>
+              <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-500 mx-auto mt-6 rounded-full"></div>
+            </div>
+
+            {/* Overlapping Carousel */}
+            <div className="relative flex justify-center items-center">
+              {/* Navigation Arrows */}
+              <button
+                onClick={() => setCurrentSlide((prev) => (prev > 0 ? prev - 1 : artGallery.length - 1))}
+                className="absolute left-4 z-20 w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+              >
+                <i className="fas fa-chevron-left"></i>
+              </button>
+
+              <div className="relative w-full max-w-4xl h-96 flex justify-center items-center">
+                {artGallery.map((art, index) => {
+                  const isActive = index === currentSlide;
+                  const isPrev = index === (currentSlide - 1 + artGallery.length) % artGallery.length;
+                  const isNext = index === (currentSlide + 1) % artGallery.length;
+
+                  let transform = '';
+                  let zIndex = 0;
+                  let opacity = 0;
+
+                  if (isActive) {
+                    transform = 'translateX(0) scale(1) rotate(0deg)';
+                    zIndex = 10;
+                    opacity = 1;
+                  } else if (isPrev) {
+                    transform = 'translateX(-60%) scale(0.8) rotate(-5deg)';
+                    zIndex = 5;
+                    opacity = 0.7;
+                  } else if (isNext) {
+                    transform = 'translateX(60%) scale(0.8) rotate(5deg)';
+                    zIndex = 5;
+                    opacity = 0.7;
+                  }
+
+                  return (
+                    <div
+                      key={art.id}
+                      className={`absolute transition-all duration-700 ease-out cursor-pointer group ${
+                        isActive ? 'hover:scale-105' : ''
+                      }`}
+                      style={{
+                        transform,
+                        zIndex,
+                        opacity,
+                      }}
+                      onClick={() => setCurrentSlide(index)}
+                    >
+                      <div className="relative w-80 h-96 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
+                        {/* Art Image */}
+                        <div className="relative h-64 overflow-hidden">
+                          <img
+                            src={art.image}
+                            alt={art.title}
+                            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-125"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                        </div>
+
+                        {/* Art Content */}
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                              {art.price}
+                            </span>
+                            <div className="flex items-center space-x-1">
+                              {[...Array(5)].map((_, i) => (
+                                <i key={i} className="fas fa-star text-yellow-400 text-sm"></i>
+                              ))}
+                            </div>
+                          </div>
+
+                          <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors">
+                            {art.title}
+                          </h3>
+
+                          <p className="text-gray-300 text-sm leading-relaxed mb-4 line-clamp-2">
+                            {art.description}
+                          </p>
+
+                          <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 px-6 rounded-full hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-105 hover:-rotate-1">
+                            Order Now
+                          </button>
+                        </div>
+
+                        {/* Hover glow effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                        {/* Floating accent elements */}
+                        <div className="absolute top-4 right-4 w-4 h-4 bg-white/20 rounded-full animate-ping"></div>
+                        <div className="absolute bottom-4 left-4 w-3 h-3 bg-purple-400 rounded-full animate-pulse delay-100"></div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              <div className="relative z-10">
-                <h2 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-                  Ready to Transform Your Vision?
-                </h2>
-                <p className="text-xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
-                  Join hundreds of satisfied clients who have turned their ideas into extraordinary realities. Let's create something remarkable together.
-                </p>
+              <button
+                onClick={() => setCurrentSlide((prev) => (prev + 1) % artGallery.length)}
+                className="absolute right-4 z-20 w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300 hover:scale-110"
+              >
+                <i className="fas fa-chevron-right"></i>
+              </button>
+            </div>
 
-                <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                  <button className="group relative inline-flex items-center px-10 py-5 bg-white text-blue-600 font-bold rounded-full overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-rotate-1">
-                    <span className="relative z-10 flex items-center">
-                      Start Your Project
-                      <i className="fas fa-rocket ml-3 transition-transform group-hover:translate-x-2"></i>
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                  </button>
+            {/* Carousel Indicators */}
+            <div className="flex justify-center space-x-2 mt-8">
+              {artGallery.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentSlide
+                      ? 'bg-blue-600 scale-125'
+                      : 'bg-white/30 hover:bg-white/50'
+                  }`}
+                />
+              ))}
+            </div>
 
-                  <button className="group relative inline-flex items-center px-10 py-5 border-2 border-white text-white font-bold rounded-full overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:rotate-1">
-                    <span className="relative z-10 flex items-center">
-                      <i className="fas fa-calendar-alt mr-3"></i>
-                      Schedule a Call
-                    </span>
-                    <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                  </button>
-                </div>
-
-                {/* Trust Indicators */}
-                <div className="mt-12 flex flex-wrap justify-center items-center gap-8 text-blue-100">
-                  <div className="flex items-center space-x-2">
-                    <i className="fas fa-shield-alt text-lg"></i>
-                    <span className="text-sm font-medium">100% Secure</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <i className="fas fa-clock text-lg"></i>
-                    <span className="text-sm font-medium">24/7 Support</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <i className="fas fa-award text-lg"></i>
-                    <span className="text-sm font-medium">Award Winning</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Elements */}
-              <div className="absolute top-6 right-6 w-12 h-12 bg-white/20 rounded-full flex items-center justify-center animate-pulse">
-                <i className="fas fa-sparkles text-white"></i>
-              </div>
-              <div className="absolute bottom-6 left-6 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center animate-bounce">
-                <i className="fas fa-star text-white"></i>
-              </div>
+            <div className="text-center mt-16">
+              <button className="relative group inline-flex items-center px-10 py-4 bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 text-white font-bold rounded-full overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:rotate-2 active:rotate-0">
+                <span className="relative z-10 flex items-center">
+                  View All Artworks
+                  <i className="fas fa-arrow-right ml-3 transition-transform group-hover:translate-x-2"></i>
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-red-500 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+              </button>
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+
 
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-16">
@@ -486,8 +724,8 @@ const Hero = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+      </div>
+        </div>
+);
 };
-
 export default Hero;
