@@ -1,26 +1,18 @@
-# Portfolio Management Issues Fix
+# Booking System Implementation TODO
 
-## Information Gathered
-- Database schema mismatch: `db.js` drops fields that migrations try to add
-- Form submission not working due to backend validation or database errors
-- UI not updating after successful submission
+## Backend Changes
+- [ ] Create backend/app/models/booking.js model
+- [ ] Create backend/migrations/014_create_bookings.sql migration
+- [ ] Create backend/app/controllers/booking_controller.js controller
+- [ ] Create backend/app/routes/booking_routes.js routes
+- [ ] Update backend/app/routes/__init__.js to include booking routes
 
-## Plan
-- [ ] Fix database schema to properly include all portfolio fields
-- [ ] Ensure backend controller properly handles project creation
-- [ ] Add proper error handling and validation
-- [ ] Update tests to cover the add project functionality
-- [ ] Verify form submission and UI updates work correctly
+## Frontend Changes
+- [ ] Update client/src/services/api.js with booking functions
+- [ ] Update client/src/components/Services.jsx to add booking modal/form
+- [ ] Update client/src/components/AdminDashboard.jsx to add Schedule tab
 
-## Dependent Files to be edited
-- [x] `backend/db.js`: Remove the DROP COLUMN statements that conflict with migrations
-- [x] `backend/app/controllers/portfolio_controller_updated.js`: Ensure proper error handling
-- [ ] `backend/app/routes/admin_routes_updated.js`: Verify routes are correct
-- [ ] `backend/app/models/portfolio_project_updated.js`: Ensure model handles all fields
-- [ ] `client/src/components/AdminDashboard.jsx`: Add error handling for form submission
-- [ ] `client/src/services/api.js`: Ensure API calls are correct
-
-## Followup steps
-- [ ] Run migrations to ensure database schema is correct
-- [ ] Test the form submission
-- [ ] Verify UI updates after adding projects
+## Testing & Deployment
+- [ ] Run migration to create bookings table
+- [ ] Test booking creation from Services page
+- [ ] Test admin viewing bookings in Schedule tab

@@ -1,4 +1,4 @@
-const PortfolioProject = require('../models/portfolio_project');
+const PortfolioProject = require('../models/portfolio_project_updated');
 const PortfolioCategory = require('../models/portfolio_category');
 const { authenticateToken } = require('../middleware/auth');
 const { pool } = require('../../db');
@@ -9,7 +9,10 @@ class PortfolioController {
     try {
       const filters = req.query;
       const projects = await PortfolioProject.findAll(filters);
-      res.json(projects);
+      res.json({
+        success: true,
+        data: projects
+      });
     } catch (error) {
       console.error('Error fetching projects:', error);
       res.status(500).json({
@@ -28,11 +31,15 @@ class PortfolioController {
 
       if (!project) {
         return res.status(404).json({
+          success: false,
           message: 'Project not found'
         });
       }
 
-      res.json(project);
+      res.json({
+        success: true,
+        data: project
+      });
     } catch (error) {
       console.error('Error fetching project:', error);
       res.status(500).json({
@@ -47,7 +54,10 @@ class PortfolioController {
   static async getCategories(req, res) {
     try {
       const categories = await PortfolioCategory.findAll();
-      res.json(categories);
+      res.json({
+        success: true,
+        data: categories
+      });
     } catch (error) {
       console.error('Error fetching categories:', error);
       res.status(500).json({
@@ -63,7 +73,10 @@ class PortfolioController {
     try {
       const limit = parseInt(req.query.limit) || 6;
       const projects = await PortfolioProject.getFeatured(limit);
-      res.json(projects);
+      res.json({
+        success: true,
+        data: projects
+      });
     } catch (error) {
       console.error('Error fetching featured projects:', error);
       res.status(500).json({
@@ -80,7 +93,10 @@ class PortfolioController {
       const { category } = req.params;
       const limit = parseInt(req.query.limit) || 12;
       const projects = await PortfolioProject.getByCategory(category, limit);
-      res.json(projects);
+      res.json({
+        success: true,
+        data: projects
+      });
     } catch (error) {
       console.error('Error fetching projects by category:', error);
       res.status(500).json({

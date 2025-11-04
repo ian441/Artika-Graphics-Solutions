@@ -9,6 +9,7 @@ const messageRoutes = require('./message_routes');
 const favoriteRoutes = require('./favorite_routes');
 const orderRoutes = require('./order_routes');
 const blogRoutes = require('./blog_routes');
+const bookingRoutes = require('./booking_routes');
 
 // Export all routes
 module.exports = {
@@ -21,5 +22,6 @@ module.exports = {
   messageRoutes,
   favoriteRoutes,
   orderRoutes,
-  blogRoutes
+  blogRoutes,
+  bookingRoutes
 };

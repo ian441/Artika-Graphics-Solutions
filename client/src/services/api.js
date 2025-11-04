@@ -633,6 +633,53 @@ export const sendAdminMessage = async (messageData) => {
   });
 };
 
+// Bookings API
+export const createBooking = async (bookingData) => {
+  return apiFetch('/bookings', {
+    method: 'POST',
+    body: JSON.stringify(bookingData),
+  });
+};
+
+export const getAdminBookings = async () => {
+  const token = localStorage.getItem('token');
+  return apiFetch('/admin/bookings', {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const getAdminBookingsByDate = async (date) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/admin/bookings/date/${date}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
+export const updateAdminBooking = async (id, bookingData) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/admin/bookings/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(bookingData),
+  });
+};
+
+export const deleteAdminBooking = async (id) => {
+  const token = localStorage.getItem('token');
+  return apiFetch(`/admin/bookings/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+};
+
 // Utility function for error handling
 export const handleApiError = (error) => {
   console.error('API Error:', error);

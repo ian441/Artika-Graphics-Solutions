@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const { pool, createTables, insertSampleData } = require('./db');
-const { authRoutes, portfolioRoutes, contactRoutes, adminRoutes,  userRoutes, projectRoutes, messageRoutes, favoriteRoutes, orderRoutes, blogRoutes } = require('./app/routes/__init__');
+const { authRoutes, portfolioRoutes, contactRoutes, adminRoutes,  userRoutes, projectRoutes, messageRoutes, favoriteRoutes, orderRoutes, blogRoutes, bookingRoutes } = require('./app/routes/__init__');
 require('dotenv').config();
 
 const app = express();
@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
     ? ['https://your-frontend-domain.onrender.com', 'https://artika-graphics-frontend.onrender.com']
-    : 'http://localhost:3000',
+    : true,
   credentials: true
 }));
 app.use(express.json());
@@ -40,6 +40,7 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/blog', blogRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 // Catch all handler: send back React's index.html file for client-side routing
 if (process.env.NODE_ENV === 'production') {

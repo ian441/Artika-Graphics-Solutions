@@ -8,10 +8,7 @@ class PortfolioProject {
     category,
     image,
     description,
-    challenge,
-    solution,
-    results,
-    process,
+    status,
     duration,
     featured = false,
     created_at,
@@ -24,10 +21,7 @@ class PortfolioProject {
     this.category = category;
     this.image = image;
     this.description = description;
-    this.challenge = challenge;
-    this.solution = solution;
-    this.results = results;
-    this.process = process;
+    this.status = status;
     this.duration = duration;
     this.featured = featured;
     this.created_at = created_at;
@@ -42,19 +36,15 @@ class PortfolioProject {
       category,
       image,
       description,
-      challenge,
-      solution,
-      results,
-      process,
+      status,
       duration,
       featured
     } = projectData;
 
     const query = `
       INSERT INTO portfolio_projects (
-        title, client, category, image, description, challenge,
-        solution, results, process, duration, featured
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        title, client, category, image, description, status, duration, featured
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *
     `;
 
@@ -64,10 +54,7 @@ class PortfolioProject {
       category,
       image,
       description,
-      challenge,
-      solution,
-      results,
-      process,
+      status,
       duration,
       featured
     ];

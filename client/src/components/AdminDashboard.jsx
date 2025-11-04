@@ -65,11 +65,7 @@ const AdminDashboard = () => {
     category: '',
     image: '',
     description: '',
-    challenge: '',
-    solution: '',
-    results: '',
-    process: '',
-    duration: '',
+    status: '',
     featured: false
   });
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -81,6 +77,7 @@ const AdminDashboard = () => {
     assigned_to: '',
     deadline: ''
   });
+  const [showProjectManagement, setShowProjectManagement] = useState(false);
 
   useEffect(() => {
     checkAuthentication();
@@ -298,11 +295,7 @@ const AdminDashboard = () => {
       category: '',
       image: '',
       description: '',
-      challenge: '',
-      solution: '',
-      results: '',
-      process: '',
-      duration: '',
+      status: '',
       featured: false
     });
   };
@@ -315,10 +308,7 @@ const AdminDashboard = () => {
       category: project.category || '',
       image: project.image || '',
       description: project.description || '',
-      challenge: project.challenge || '',
-      solution: project.solution || '',
-      results: project.results || '',
-      process: project.process || '',
+      status: project.status || '',
       duration: project.duration || '',
       featured: project.featured || false
     });
@@ -395,7 +385,6 @@ const AdminDashboard = () => {
     { id: 'portfolio', label: 'Portfolio', icon: '🎨' },
     { id: 'communications', label: 'Communications', icon: '💬' },
     { id: 'users', label: 'Users', icon: '👥' },
-    { id: 'projects', label: 'Projects', icon: '📋' },
     { id: 'orders', label: 'Orders', icon: '💰' },
     { id: 'blog', label: 'Blog', icon: '📝' }
   ];
@@ -554,6 +543,19 @@ const AdminDashboard = () => {
                         </select>
                       </div>
                       <div>
+                        <label className="block text-sm font-medium text-gray-700">Status</label>
+                        <select
+                          value={portfolioForm.status}
+                          onChange={(e) => setPortfolioForm({...portfolioForm, status: e.target.value})}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Status</option>
+                          <option value="pending">Pending</option>
+                          <option value="in_progress">In Progress</option>
+                          <option value="completed">Completed</option>
+                        </select>
+                      </div>
+                      <div>
                         <label className="block text-sm font-medium text-gray-700">Image URL</label>
                         <input
                           type="url"
@@ -596,42 +598,7 @@ const AdminDashboard = () => {
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Challenge</label>
-                      <textarea
-                        rows={3}
-                        value={portfolioForm.challenge}
-                        onChange={(e) => setPortfolioForm({...portfolioForm, challenge: e.target.value})}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Solution</label>
-                      <textarea
-                        rows={3}
-                        value={portfolioForm.solution}
-                        onChange={(e) => setPortfolioForm({...portfolioForm, solution: e.target.value})}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Results</label>
-                      <textarea
-                        rows={3}
-                        value={portfolioForm.results}
-                        onChange={(e) => setPortfolioForm({...portfolioForm, results: e.target.value})}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Process</label>
-                      <textarea
-                        rows={3}
-                        value={portfolioForm.process}
-                        onChange={(e) => setPortfolioForm({...portfolioForm, process: e.target.value})}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
+
                     <div className="flex space-x-2">
                       <button
                         type="submit"
@@ -667,6 +634,7 @@ const AdminDashboard = () => {
                         <div className="mt-2 flex items-center space-x-4 text-sm text-gray-500">
                           <span>Client: {project.client}</span>
                           <span>Category: {project.category}</span>
+                          {project.status && <span>Status: {project.status}</span>}
                           {project.featured && <span className="text-yellow-600 font-medium">⭐ Featured</span>}
                         </div>
                       </div>
